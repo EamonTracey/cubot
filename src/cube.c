@@ -2,6 +2,21 @@
 
 #include "cube.h"
 
+int cubes_equal(struct Cube *cube_a, struct Cube *cube_b) {
+    for (int i = 0; i < 12; ++i) {
+        if (cube_a->edge_orientation[i] != cube_b->edge_orientation[i] ||
+            cube_a->edge_permutation[i] != cube_b->edge_permutation[i])
+            return 0;
+    }
+    for (int i = 0; i < 8; ++i) {
+        if (cube_a->corner_orientation[i] != cube_b->corner_orientation[i] ||
+            cube_a->corner_permutation[i] != cube_b->corner_permutation[i])
+            return 0;
+    }
+
+    return 1;
+}
+
 void apply_edge_orientation(struct Cube *cube, uint8_t edge_orientation[12]) {
     for (int i = 0; i < 12; ++i) {
         cube->edge_orientation[i] += edge_orientation[i];
