@@ -34,3 +34,10 @@ void apply_corner_permutation(struct Cube *cube,
     for (int i = 0; i < 8; ++i)
         cube->corner_permutation[i] = new_corner_permutation[i];
 }
+
+void apply_element(struct Cube *cube, struct Cube *element) {
+    apply_edge_orientation(cube, element->edge_orientation);
+    apply_edge_permutation(cube, element->edge_permutation);
+    apply_corner_orientation(cube, element->corner_orientation);
+    apply_corner_permutation(cube, element->corner_permutation);
+}
