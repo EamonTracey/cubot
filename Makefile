@@ -49,7 +49,7 @@ $(BUILD_LIBS_DIR)/libcubot.a: $(BUILD_OBJS_FILES)
 .PHONY: bins
 bins: $(BUILD_BINS_FILES)
 
-$(BUILD_BINS_DIR)/%: $(BIN_DIR)/%.c
+$(BUILD_BINS_DIR)/%: $(BIN_DIR)/%.c libs
 	mkdir -p $(BUILD_BINS_DIR)
 	$(CC) $(CFLAGS) -I$(SRC_DIR) -L$(BUILD_LIBS_DIR) -lcubot $(LIBS) $< -o $@
 
@@ -59,8 +59,8 @@ $(BUILD_BINS_DIR)/%: $(BIN_DIR)/%.c
 
 .PHONY: format
 format:
-	clang-format -i src/*.c
+	clang-format -i $(SRC_FILES) $(BIN_FILES)
 
 .PHONY: clean
 clean:
-	rm -fr build/
+	rm -fr $(BUILD_DIR)
