@@ -1,58 +1,75 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "cube.h"
 
+// oriented = 0
+// flipped = 1
+uint8_t flip_edge[2][2] = {{0, 1}, {1, 0}};
+
+// oriented = 0
+// clockwise = 1
+// counterclockwise = 2
+uint8_t twist_corner[3][3] = {{0, 1, 2}, {1, 2, 0}, {2, 0, 1}};
+
+struct Cube SOLVED_CUBE = (struct Cube){
+    {{0, 0},
+     {0, 1},
+     {0, 2},
+     {0, 3},
+     {0, 4},
+     {0, 5},
+     {0, 6},
+     {0, 7},
+     {0, 8},
+     {0, 9},
+     {0, 10},
+     {0, 11}},
+    {{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}}};
+
+struct Cube *init_cube_solved() {
+    struct Cube *solved_cube = (struct Cube *)malloc(sizeof(struct Cube));
+    *solved_cube = SOLVED_CUBE;
+    return solved_cube;
+}
+
+struct Cube *init_cube_copy(struct Cube *cube) {
+    struct Cube *copy_cube = (struct Cube *)malloc(sizeof(struct Cube));
+    *copy_cube = *cube;
+    return copy_cube;
+}
+
 int cubes_equal(struct Cube *cube_a, struct Cube *cube_b) {
     for (int i = 0; i < 12; ++i) {
-        if (cube_a->edge_orientation[i] != cube_b->edge_orientation[i] ||
-            cube_a->edge_permutation[i] != cube_b->edge_permutation[i])
+        if (cube_a->edges[i].orientation != cube_b->edges[i].orientation ||
+            cube_a->edges[i].permutation != cube_b->edges[i].permutation)
             return 0;
-    }
-    for (int i = 0; i < 8; ++i) {
-        if (cube_a->corner_orientation[i] != cube_b->corner_orientation[i] ||
-            cube_a->corner_permutation[i] != cube_b->corner_permutation[i])
+        if (i < 8 &&
+            (cube_a->corners[i].orientation != cube_b->corners[i].orientation ||
+             cube_a->corners[i].permutation != cube_b->corners[i].permutation))
             return 0;
     }
 
     return 1;
 }
 
-void apply_edge_orientation(struct Cube *cube, uint8_t edge_orientation[12]) {
+void apply_cube(struct Cube *cube, struct Cube *cube_to_apply) {
+    struct Cube new_cube;
+
     for (int i = 0; i < 12; ++i) {
-        cube->edge_orientation[i] += edge_orientation[i];
-        cube->edge_orientation[i] %= 2;
+        new_cube.edges[i] = cube->edges[cube_to_apply->edges[i].permutation];
+        new_cube.edges[i].orientation =
+            flip_edge[cube_to_apply->edges[i].orientation]
+                     [new_cube.edges[i].orientation];
+
+        if (i < 8) {
+            new_cube.corners[i] =
+                cube->corners[cube_to_apply->corners[i].permutation];
+            new_cube.corners[i].orientation =
+                twist_corner[cube_to_apply->corners[i].orientation]
+                            [new_cube.corners[i].orientation];
+        }
     }
-}
 
-void apply_edge_permutation(struct Cube *cube, uint8_t edge_permutation[12]) {
-    uint8_t new_edge_permutation[12];
-    for (int i = 0; i < 12; ++i)
-        new_edge_permutation[i] = cube->edge_permutation[edge_permutation[i]];
-    for (int i = 0; i < 12; ++i)
-        cube->edge_permutation[i] = new_edge_permutation[i];
-}
-
-void apply_corner_orientation(struct Cube *cube,
-                              uint8_t corner_orientation[8]) {
-    for (int i = 0; i < 8; ++i) {
-        cube->corner_orientation[i] += corner_orientation[i];
-        cube->corner_orientation[i] %= 3;
-    }
-}
-
-void apply_corner_permutation(struct Cube *cube,
-                              uint8_t corner_permutation[8]) {
-    uint8_t new_corner_permutation[8];
-    for (int i = 0; i < 8; ++i)
-        new_corner_permutation[i] =
-            cube->corner_permutation[corner_permutation[i]];
-    for (int i = 0; i < 8; ++i)
-        cube->corner_permutation[i] = new_corner_permutation[i];
-}
-
-void apply_element(struct Cube *cube, struct Cube *element) {
-    apply_edge_orientation(cube, element->edge_orientation);
-    apply_edge_permutation(cube, element->edge_permutation);
-    apply_corner_orientation(cube, element->corner_orientation);
-    apply_corner_permutation(cube, element->corner_permutation);
+    *cube = new_cube;
 }

@@ -3,21 +3,36 @@
 #include "cube.h"
 
 int main() {
-    struct Cube solved = (struct Cube){{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {8, 5, 10, 0, 1, 2, 4, 6, 3, 7, 11, 9},
-                                       {0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 1, 2, 3, 4, 5, 6, 7}};
+    struct Cube cube = SOLVED_CUBE;
 
-    for (int i = 0; i < 11; ++i)
-        printf("%d ", solved.edge_permutation[i]);
-    printf("%d\n", solved.edge_permutation[11]);
+    struct Cube cube_to_apply = (struct Cube){
+        {{0, 0},
+         {0, 7},
+         {0, 2},
+         {0, 3},
+         {0, 4},
+         {0, 5},
+         {0, 6},
+         {1, 1},
+         {0, 8},
+         {0, 9},
+         {0, 10},
+         {0, 11}},
+        {{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}}};
 
-    apply_edge_permutation(&solved,
-                           (uint8_t[12]){2, 0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    ////////////////////////////////////////////////////////////////////
 
-    for (int i = 0; i < 11; ++i)
-        printf("%d ", solved.edge_permutation[i]);
-    printf("%d\n", solved.edge_permutation[11]);
+    for (int i = 0; i < 12; ++i)
+        printf("%d %d, ", cube.edges[i].orientation, cube.edges[i].permutation);
+    printf("\n");
+
+    apply_cube(&cube, &cube_to_apply);
+
+    for (int i = 0; i < 12; ++i)
+        printf("%d %d, ", cube.edges[i].orientation, cube.edges[i].permutation);
+    printf("\n");
+
+    ////////////////////////////////////////////////////////////////////
 
     return 0;
 }

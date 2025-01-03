@@ -13,6 +13,7 @@ BUILD_LIBS_DIR = $(BUILD_DIR)/libs
 BUILD_BINS_DIR = $(BUILD_DIR)/bins
 
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+HEADER_FILES = $(wildcard $(SRC_DIR)/*.h)
 BIN_FILES = $(wildcard $(BIN_DIR)/*.c)
 BUILD_OBJS_FILES = $(patsubst $(SRC_DIR)/%.c, $(BUILD_OBJS_DIR)/%.o, $(SRC_FILES))
 BUILD_BINS_FILES = $(patsubst $(BIN_DIR)/%.c, $(BUILD_BINS_DIR)/%, $(BIN_FILES))
@@ -59,7 +60,7 @@ $(BUILD_BINS_DIR)/%: $(BIN_DIR)/%.c libs
 
 .PHONY: format
 format:
-	clang-format -i $(SRC_FILES) $(BIN_FILES)
+	clang-format -i $(SRC_FILES) $(HEADER_FILES) $(BIN_FILES)
 
 .PHONY: clean
 clean:
