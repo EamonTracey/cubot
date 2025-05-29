@@ -30,6 +30,8 @@ int extract_face_colors(char *path, struct Color colors[9]) {
     uint32_t facelet_size;
     uint32_t center_size;
     uint32_t center_area;
+    uint32_t center_start;
+    uint32_t center_end;
 
     image_file = fopen(path, "rb");
     if (image_file == NULL)
@@ -62,6 +64,8 @@ int extract_face_colors(char *path, struct Color colors[9]) {
     facelet_size = size / 3;
     center_size = facelet_size / 3 ? facelet_size / 3 : 1;
     center_area = center_size * center_size;
+    center_start = facelet_size / 3;
+    center_end = facelet_size - center_start;
 
     // Compute the RGB sum of each facelet. To account for image imperfection,
     // we strictly use the pixels in the center of each facelet. The center of a
@@ -74,19 +78,17 @@ int extract_face_colors(char *path, struct Color colors[9]) {
 
         jpeg_read_scanlines(&cinfo, &buffer, 1);
         for (uint32_t j = 0; j < size; ++j) {
-            uint8_t facelet_column = (uint8_t)(j / facelet_size);
+            uint32_t facelet_column = (uint32_t)(j / facelet_size);
 
             // Skip pixels outside the center region of the facelet.
-            uint8_t facelet_i = (uint8_t)(i % facelet_size);
-            uint8_t facelet_j = (uint8_t)(j % facelet_size);
-            uint8_t center_start = (uint8_t)(facelet_size / 3);
-            uint8_t center_end = (uint8_t)(facelet_size - center_start);
+            uint32_t facelet_i = (uint32_t)(i % facelet_size);
+            uint32_t facelet_j = (uint32_t)(j % facelet_size);
             if (facelet_i < center_start || facelet_i > center_end ||
                 facelet_j < center_start || facelet_j > center_end) {
                 continue;
             }
 
-            uint8_t facelet = (uint8_t)(facelet_row * 3 + facelet_column);
+            uint32_t facelet = (uint32_t)(facelet_row * 3 + facelet_column);
             sums[facelet * 3] += buffer[j * 3];
             sums[facelet * 3 + 1] += buffer[j * 3 + 1];
             sums[facelet * 3 + 2] += buffer[j * 3 + 2];
