@@ -1,0 +1,10 @@
+ipython
+jupytext
+matplotlib
+onnxruntime
+opencv-python
+pandas
+scikit-image
+scikit-learn
+skl2onnx
+yapf

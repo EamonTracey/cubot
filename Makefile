@@ -1,67 +1,51 @@
-CC=gcc
-CFLAGS=-Wall -Wconversion
-LIBS=-ljpeg
-
-AR=ar
-ARFLAGS = rcs
+CC=g++
+CFLAGS=-Wall -Wconversion -Werror
+LIBS=
 
 SRC_DIR = src
-BIN_DIR = bin
+SRC_LIB_DIR = $(SRC_DIR)/lib
+SRC_BIN_DIR = $(SRC_DIR)/bin
+SRC_PYTHON_DIR = $(SRC_DIR)/python
 BUILD_DIR = build
-BUILD_OBJS_DIR = $(BUILD_DIR)/objs
-BUILD_LIBS_DIR = $(BUILD_DIR)/libs
-BUILD_BINS_DIR = $(BUILD_DIR)/bins
+BUILD_LIB_DIR = $(BUILD_DIR)/lib
+BUILD_OBJ_DIR = $(BUILD_DIR)/obj
+BUILD_BIN_DIR = $(BUILD_DIR)/bin
 
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
-HEADER_FILES = $(wildcard $(SRC_DIR)/*.h)
-BIN_FILES = $(wildcard $(BIN_DIR)/*.c)
-BUILD_OBJS_FILES = $(patsubst $(SRC_DIR)/%.c, $(BUILD_OBJS_DIR)/%.o, $(SRC_FILES))
-BUILD_BINS_FILES = $(patsubst $(BIN_DIR)/%.c, $(BUILD_BINS_DIR)/%, $(BIN_FILES))
+LIB_NAME = cubot
+SRC_LIB_CC = $(wildcard $(SRC_LIB_DIR)/*.cc)
+SRC_LIB_H = $(wildcard $(SRC_LIB_DIR)/*.h)
+OBJ_FILES = $(patsubst $(SRC_LIB_DIR)/%.cc, $(BUILD_OBJ_DIR)/%.o, $(SRC_LIB_CC))
+
+SRC_BIN_CC = $(wildcard $(SRC_BIN_DIR)/*.cc)
+BINARIES = $(patsubst $(SRC_BIN_DIR)/%.cc, $(BUILD_BIN_DIR)/%, $(SRC_BIN_CC))
+
+SRC_PYTHON_PY = $(wildcard $(SRC_PYTHON_DIR)/*.py)
 
 .PHONY: all
-all: objs libs bins
+all: $(BUILD_LIB_DIR)/lib$(LIB_NAME).a $(BINARIES)
 
-##################################################
-# Build object files.
-##################################################
+# Archive the library object files.
+$(BUILD_LIB_DIR)/lib$(LIB_NAME).a: $(OBJ_FILES)
+	@mkdir -p $(BUILD_LIB_DIR)
+	ar rcs $@ $^
 
-.PHONY: objs
-objs: $(BUILD_OBJS_FILES)
-
-$(BUILD_OBJS_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(BUILD_OBJS_DIR)
+# Compile the library into object files.
+$(BUILD_OBJ_DIR)/%.o: $(SRC_LIB_DIR)/%.cc $(SRC_LIB_H)
+	@mkdir -p $(BUILD_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-##################################################
-# Build library files.
-##################################################
+# Build the binaries into executables.
+$(BUILD_BIN_DIR)/%: $(SRC_BIN_DIR)/%.cc $(BUILD_LIB_DIR)/lib$(LIB_NAME).a
+	@mkdir -p $(BUILD_BIN_DIR)
+	$(CC) $(CFLAGS) $(LIBS) $< -o $@ -I$(SRC_LIB_DIR) -L$(BUILD_LIB_DIR) -l$(LIB_NAME)
 
-.PHONY: libs
-libs: $(BUILD_LIBS_DIR)/libcubot.a
-
-$(BUILD_LIBS_DIR)/libcubot.a: $(BUILD_OBJS_FILES)
-	mkdir -p $(BUILD_LIBS_DIR)
-	$(AR) $(ARFLAGS) $(BUILD_LIBS_DIR)/libcubot.a $(BUILD_OBJS_FILES)
-
-##################################################
-# Build binary files.
-##################################################
-
-.PHONY: bins
-bins: $(BUILD_BINS_FILES)
-
-$(BUILD_BINS_DIR)/%: $(BIN_DIR)/%.c libs
-	mkdir -p $(BUILD_BINS_DIR)
-	$(CC) $(CFLAGS) -I$(SRC_DIR) -L$(BUILD_LIBS_DIR) -lcubot $(LIBS) $< -o $@
-
-##################################################
-# Helpful commands.
-##################################################
-
+# Format.
 .PHONY: format
 format:
-	clang-format -i $(SRC_FILES) $(HEADER_FILES) $(BIN_FILES)
+	yapf -i $(SRC_PYTHON_PY)
+	clang-format -i $(SRC_LIB_CC) $(SRC_LIB_H) $(SRC_BIN_CC)
 
+# Clean.
 .PHONY: clean
 clean:
 	rm -fr $(BUILD_DIR)
