@@ -54,11 +54,10 @@ def extract_feature_vector(image):
     a*, and b* components.
     """
     image_lab = rgb2lab(image)
-    pixels = image_lab.reshape(-1, 3)
+    pixels_lab = image_lab.reshape(-1, 3)
     return np.concatenate([
-        np.mean(pixels, axis=0),
-        np.median(pixels, axis=0),
-        np.std(pixels, axis=0),
+        np.mean(pixels_lab, axis=0),
+        np.std(pixels_lab, axis=0),
     ])
 
 
@@ -111,14 +110,15 @@ with open(labels_path) as file:
 
 # %%
 COLUMNS = [
-    "L*_mean", "a*_mean", "b*_mean", "L*_median", "a*_median", "b*_median",
-    "L*_std", "a*_std", "b*_std", "color"
+    "L*_mean", "a*_mean", "b*_mean", "L*_std", "a*_std", "b*_std", "color"
 ]
 
 df = pd.DataFrame(columns=COLUMNS)
 for image_basename, colors in labels.items():
     image_path = os.path.join(DATA_DIR, image_basename)
     image = cv2.imread(image_path, cv2.IMREAD_COLOR_RGB)
+    if image is None:
+        continue
     for i, item in enumerate(split_grid(image, 3)):
         feature_vector = extract_feature_vector(item)
         df.loc[len(df)] = [*feature_vector, colors[i]]
@@ -158,7 +158,7 @@ plt.show()
 # %%
 for name, model in models.items():
     onnx = to_onnx(model, X[:1].astype(np.float32), target_opset=21)
-    path = os.path.join(MODELS_DIR, f"{name.replace(" ", "_").lower()}.onnx")
+    path = os.path.join(MODELS_DIR, f"{name.replace(' ', '_').lower()}.onnx")
     with open(path, "wb") as f:
         f.write(onnx.SerializeToString())
 
@@ -166,7 +166,7 @@ for name, model in models.items():
 # ## Demo
 
 # %%
-models = {}
+onnx_models = {}
 onnx_paths = os.listdir(MODELS_DIR)
 onnx_paths = [os.path.join(MODELS_DIR, op) for op in onnx_paths]
 for onnx_path in onnx_paths:
@@ -175,7 +175,7 @@ for onnx_path in onnx_paths:
     session = onnxruntime.InferenceSession(onnx_path)
     input_name = session.get_inputs()[0].name
     output_name = session.get_outputs()[0].name
-    models[name] = (session, input_name, output_name)
+    onnx_models[name] = (session, input_name, output_name)
 
 # %%
 camera = cv2.VideoCapture(0)
@@ -197,8 +197,8 @@ while True:
     cv2.rectangle(frame, (x0, y0), (x1, y1), (0, 0, 255), 2)
 
     cv2.imshow(window_name, frame)
-    k = cv2.waitKey(1) & 0xFF
-    if k == 32:
+    key = cv2.waitKey(1) & 0xFF
+    if key == 32:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         break
 camera.release()
@@ -215,7 +215,7 @@ X = np.array([extract_feature_vector(item) for item in split_grid(image, 3)])
 fig, axes = plt.subplots(1, len(models), figsize=(4 * len(models), 4))
 axes = axes if len(models) > 1 else [axes]
 for ax, (name, (session, input_name,
-                output_name)) in zip(axes, models.items()):
+                output_name)) in zip(axes, onnx_models.items()):
     y = session.run([output_name], {input_name: X.astype(np.float32)})
     face = y[0].reshape(3, 3)
 

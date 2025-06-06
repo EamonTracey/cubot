@@ -1,0 +1,5 @@
+module Cubot {
+    header "cube.h"
+    header "detection.h"
+    export *
+}
