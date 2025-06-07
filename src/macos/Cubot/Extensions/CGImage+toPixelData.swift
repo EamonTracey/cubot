@@ -1,10 +1,11 @@
 import CoreGraphics
+
 import Cubot
 
 extension CGImage {
-    // Convert the CGImage to a tensor of shape (h, w, 3) that RGB values of
-    // each pixel normalized to the range [0,1].????? // TODO: fix
-    func toPixelData() -> [Float]? {
+    // Convert the CGImage to an array of RGB pixel data normalized to the range
+    // [0, 1].
+    func toPixelData() -> [CFloat]? {
         // Extract the raw pixel data. For whatever reason, space must be
         // reserved for the alpha channel, but we ignore alpha values.
         let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -23,6 +24,10 @@ extension CGImage {
             return nil
         }
         context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
-        return pixelData.map { Float($0) / 255.0 }
+
+        // Convert the data from RGBA [0, 255] to RGB [0, 1].
+        return stride(from: 0, to: pixelData.count, by: 4).flatMap { i in
+            (0..<3).map { j in CFloat(pixelData[i + j]) / 255.0 }
+        }
     }
 }

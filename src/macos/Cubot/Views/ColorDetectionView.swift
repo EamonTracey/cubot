@@ -1,3 +1,4 @@
+import Cubot
 import SwiftUI
 
 struct ColorDetectionView: View {
@@ -12,27 +13,39 @@ struct ColorDetectionView: View {
                 .onAppear { viewModel.startCamera() }
                 .onDisappear { viewModel.stopCamera() }
             Spacer()
+            HStack {
+                ForEach(0..<6) { i in
+                    Spacer()
+                    VStack {
+                        if let image = viewModel.images[i] {
+                            Image(decorative: image, scale: 1.0)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        } else {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(
+                                    style: StrokeStyle(
+                                        lineWidth: 2, dash: [6, 4])
+                                )
+                                .foregroundColor(
+                                    i == viewModel.imageIndex ? .white : .gray
+                                )
+                                .frame(width: 100, height: 100)
+                        }
+                        FaceView(colors: $viewModel.facesColors[i])
+                            .frame(width: 100, height: 100)
+                            .padding(.top)
+                    }
+                    Spacer()
+                }
+            }
+            Spacer()
             Button("Capture") {
                 viewModel.capture()
             }.disabled(viewModel.imageIndex >= viewModel.images.endIndex)
-            Spacer()
-            HStack {
-                ForEach(0..<6) { i in
-                    if let image = viewModel.images[i] {
-                        Image(decorative: image, scale: 1.0)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
-                            .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    } else {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
-                            .foregroundColor(i == viewModel.imageIndex ? .white : .gray)
-                            .frame(width: 100, height: 100)
-                    }
-                }
-            }
             Spacer()
         }
     }

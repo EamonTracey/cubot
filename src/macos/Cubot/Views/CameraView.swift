@@ -18,7 +18,9 @@ struct CameraPreview: NSViewRepresentable {
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = view.bounds
-        previewLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        previewLayer.autoresizingMask = [
+            .layerWidthSizable, .layerHeightSizable,
+        ]
         previewLayer.setAffineTransform(CGAffineTransform(scaleX: -1, y: 1))
 
         view.wantsLayer = true

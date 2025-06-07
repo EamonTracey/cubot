@@ -53,7 +53,7 @@ def extract_feature_vector(image):
     feature vector includes the mean, median, and standard deviation of the L*,
     a*, and b* components.
     """
-    image_lab = rgb2lab(image)
+    image_lab = rgb2lab(image).astype(np.float32)
     pixels_lab = image_lab.reshape(-1, 3)
     return np.concatenate([
         np.mean(pixels_lab, axis=0),
@@ -157,7 +157,7 @@ plt.show()
 
 # %%
 for name, model in models.items():
-    onnx = to_onnx(model, X[:1].astype(np.float32), target_opset=21)
+    onnx = to_onnx(model, X[:1], target_opset=21)
     path = os.path.join(MODELS_DIR, f"{name.replace(' ', '_').lower()}.onnx")
     with open(path, "wb") as f:
         f.write(onnx.SerializeToString())
@@ -216,7 +216,7 @@ fig, axes = plt.subplots(1, len(models), figsize=(4 * len(models), 4))
 axes = axes if len(models) > 1 else [axes]
 for ax, (name, (session, input_name,
                 output_name)) in zip(axes, onnx_models.items()):
-    y = session.run([output_name], {input_name: X.astype(np.float32)})
+    y = session.run([output_name], {input_name: X})
     face = y[0].reshape(3, 3)
 
     reconstruction = np.zeros((3, 3, 3))
@@ -234,3 +234,11 @@ for ax, (name, (session, input_name,
 
 plt.tight_layout()
 plt.show()
+
+# %%
+XXX = np.array([[29.7492, 25.8191, 10.3988, 12.1625, 6.19687, 5.43867]],
+               dtype=np.float32)
+
+for (name, (session, input_name, output_name)) in onnx_models.items():
+    y = session.run([output_name], {input_name: XXX})
+    print(y)
