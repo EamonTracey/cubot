@@ -8,36 +8,36 @@
 class Cube {
   public:
     struct Edge {
-        enum struct Orientation { correct, flipped };
+        enum struct Orientation { kCorrect, kFlipped };
         enum struct Position {
-            upRight,
-            upLeft,
-            upFront,
-            upBack,
-            downRight,
-            downLeft,
-            downFront,
-            downBack,
-            rightFront,
-            leftFront,
-            rightBack,
-            leftBack
+            kUpRight,
+            kUpLeft,
+            kUpFront,
+            kUpBack,
+            kDownRight,
+            kDownLeft,
+            kDownFront,
+            kDownBack,
+            kRightFront,
+            kLeftFront,
+            kRightBack,
+            kLeftBack
         };
         enum Orientation orientation;
         enum Position solvedPosition;
     };
 
     struct Corner {
-        enum struct Orientation { correct, clockwise, counterclockwise };
+        enum struct Orientation { kCorrect, kClockwise, kCounterclockwise };
         enum struct Position {
-            upRightFront,
-            upRightBack,
-            upLeftFront,
-            upLeftBack,
-            downRightFront,
-            downRightBack,
-            downLeftFront,
-            downLeftBack
+            kUpRightFront,
+            kUpRightBack,
+            kUpLeftFront,
+            kUpLeftBack,
+            kDownRightFront,
+            kDownRightBack,
+            kDownLeftFront,
+            kDownLeftBack
         };
         enum Orientation orientation;
         enum Position solvedPosition;

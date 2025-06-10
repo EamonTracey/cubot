@@ -7,24 +7,24 @@
 class Algorithm {
   public:
     enum struct Turn {
-        upClockwise,
-        upHalf,
-        upCounterclockwise,
-        downClockwise,
-        downHalf,
-        downCounterclockwise,
-        rightClockwise,
-        rightHalf,
-        rightCounterclockwise,
-        leftClockwise,
-        leftHalf,
-        leftCounterclockwise,
-        frontClockwise,
-        frontHalf,
-        frontCounterclockwise,
-        backClockwise,
-        backHalf,
-        backCounterclockwise
+        kUpClockwise,
+        kUpHalf,
+        kUpCounterclockwise,
+        kDownClockwise,
+        kDownHalf,
+        kDownCounterclockwise,
+        kRightClockwise,
+        kRightHalf,
+        kRightCounterclockwise,
+        kLeftClockwise,
+        kLeftHalf,
+        kLeftCounterclockwise,
+        kFrontClockwise,
+        kFrontHalf,
+        kFrontCounterclockwise,
+        kBackClockwise,
+        kBackHalf,
+        kBackCounterclockwise
     };
 
     Algorithm(std::vector<enum Turn> turns);
