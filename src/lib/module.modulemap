@@ -1,5 +1,5 @@
 module Cubot {
+    header "color_detector.h"
     header "cube.h"
-    header "detection.h"
     export *
 }

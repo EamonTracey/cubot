@@ -14,9 +14,9 @@ extension Cubot.Color {
         case .BLUE:
             return .blue
         case .RED:
-            return .orange
-        case .ORANGE:
             return .red
+        case .ORANGE:
+            return .orange
         @unknown default:
             fatalError()
         }

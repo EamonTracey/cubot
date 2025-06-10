@@ -5,7 +5,7 @@
 
 #include <onnxruntime/onnxruntime_cxx_api.h>
 
-#include "detection.h"
+#include "color_detector.h"
 #include "models.h"
 
 struct ColorDetector::ONNXImpl {

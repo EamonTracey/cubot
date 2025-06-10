@@ -10,7 +10,8 @@ struct CubotColorPickerView: View {
                 Circle()
                     .foregroundColor(color.asSwiftUIColor)
                     .overlay {
-                        Circle().stroke(self.color == color ? .white : .clear)
+                        Circle()
+                            .stroke(self.color == color ? .white : .clear, lineWidth: 2)
                     }
                     .onTapGesture { _ in self.color = color }
             }

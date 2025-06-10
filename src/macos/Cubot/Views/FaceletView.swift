@@ -17,6 +17,6 @@ struct FaceletView: View {
             }
         }
         .onHover { isHovering in self.isHovering = isHovering }
-        .border(isHovering ? .white : .clear)
+        .border(isHovering ? .white : .clear, width: 2)
     }
 }

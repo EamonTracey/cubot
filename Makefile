@@ -1,6 +1,6 @@
 CC=clang++
 CFLAGS=-Wall -Wconversion -std=c++17
-LIBS=-lonnxruntime -lfmt -lspdlog
+LIBS=-lonnxruntime -lfmt
 
 SRC_DIR = src
 SRC_LIB_DIR = $(SRC_DIR)/lib
