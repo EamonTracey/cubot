@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+namespace cubot {
+
 enum struct Color { WHITE, YELLOW, GREEN, BLUE, RED, ORANGE };
 
 class ColorDetector {
@@ -34,5 +36,7 @@ class ColorDetector {
     // respectively.
     static std::vector<float> RGBToLAB(float r, float g, float b);
 };
+
+} // namespace cubot
 
 #endif

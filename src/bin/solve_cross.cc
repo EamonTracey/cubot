@@ -8,6 +8,8 @@
 #include "cube.h"
 #include "state.h"
 
+using namespace cubot;
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         fmt::print("Usage: ./{} <scramble>\n", argv[0]);

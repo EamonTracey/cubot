@@ -5,6 +5,8 @@
 
 #include "algorithm.h"
 
+namespace cubot {
+
 class Cube {
   public:
     struct Edge {
@@ -83,5 +85,7 @@ class Cube {
 bool operator==(const Cube::Edge &a, const Cube::Edge &b);
 bool operator==(const Cube::Corner &a, const Cube::Corner &b);
 bool operator==(const Cube &a, const Cube &b);
+
+} // namespace cubot
 
 #endif

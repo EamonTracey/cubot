@@ -4,66 +4,80 @@
 #include <string>
 #include <unordered_map>
 
-constexpr int kUpFront = static_cast<int>(Cube::Edge::Position::kUpFront);
-constexpr int kUpBack = static_cast<int>(Cube::Edge::Position::kUpBack);
-constexpr int kUpRight = static_cast<int>(Cube::Edge::Position::kUpRight);
-constexpr int kUpLeft = static_cast<int>(Cube::Edge::Position::kUpLeft);
-constexpr int kDownFront = static_cast<int>(Cube::Edge::Position::kDownFront);
-constexpr int kDownBack = static_cast<int>(Cube::Edge::Position::kDownBack);
-constexpr int kDownRight = static_cast<int>(Cube::Edge::Position::kDownRight);
-constexpr int kDownLeft = static_cast<int>(Cube::Edge::Position::kDownLeft);
-constexpr int kRightFront = static_cast<int>(Cube::Edge::Position::kRightFront);
-constexpr int kLeftFront = static_cast<int>(Cube::Edge::Position::kLeftFront);
-constexpr int kRightBack = static_cast<int>(Cube::Edge::Position::kRightBack);
-constexpr int kLeftBack = static_cast<int>(Cube::Edge::Position::kLeftBack);
+using namespace cubot;
 
-constexpr int kUpRightFront =
+static constexpr int kUpFront =
+    static_cast<int>(Cube::Edge::Position::kUpFront);
+static constexpr int kUpBack = static_cast<int>(Cube::Edge::Position::kUpBack);
+static constexpr int kUpRight =
+    static_cast<int>(Cube::Edge::Position::kUpRight);
+static constexpr int kUpLeft = static_cast<int>(Cube::Edge::Position::kUpLeft);
+static constexpr int kDownFront =
+    static_cast<int>(Cube::Edge::Position::kDownFront);
+static constexpr int kDownBack =
+    static_cast<int>(Cube::Edge::Position::kDownBack);
+static constexpr int kDownRight =
+    static_cast<int>(Cube::Edge::Position::kDownRight);
+static constexpr int kDownLeft =
+    static_cast<int>(Cube::Edge::Position::kDownLeft);
+static constexpr int kRightFront =
+    static_cast<int>(Cube::Edge::Position::kRightFront);
+static constexpr int kLeftFront =
+    static_cast<int>(Cube::Edge::Position::kLeftFront);
+static constexpr int kRightBack =
+    static_cast<int>(Cube::Edge::Position::kRightBack);
+static constexpr int kLeftBack =
+    static_cast<int>(Cube::Edge::Position::kLeftBack);
+
+static constexpr int kUpRightFront =
     static_cast<int>(Cube::Corner::Position::kUpRightFront);
-constexpr int kUpLeftFront =
+static constexpr int kUpLeftFront =
     static_cast<int>(Cube::Corner::Position::kUpLeftFront);
-constexpr int kUpRightBack =
+static constexpr int kUpRightBack =
     static_cast<int>(Cube::Corner::Position::kUpRightBack);
-constexpr int kUpLeftBack =
+static constexpr int kUpLeftBack =
     static_cast<int>(Cube::Corner::Position::kUpLeftBack);
-constexpr int kDownRightFront =
+static constexpr int kDownRightFront =
     static_cast<int>(Cube::Corner::Position::kDownRightFront);
-constexpr int kDownLeftFront =
+static constexpr int kDownLeftFront =
     static_cast<int>(Cube::Corner::Position::kDownLeftFront);
-constexpr int kDownRightBack =
+static constexpr int kDownRightBack =
     static_cast<int>(Cube::Corner::Position::kDownRightBack);
-constexpr int kDownLeftBack =
+static constexpr int kDownLeftBack =
     static_cast<int>(Cube::Corner::Position::kDownLeftBack);
 
 static_assert(static_cast<int>(Cube::Edge::Orientation::kCorrect) ==
               static_cast<int>(Cube::Corner::Orientation::kCorrect));
-constexpr int kCorrect = static_cast<int>(Cube::Edge::Orientation::kCorrect);
-constexpr int kFlipped = static_cast<int>(Cube::Edge::Orientation::kFlipped);
-constexpr int kClockwise =
+// static constexpr int kCorrect =
+//     static_cast<int>(Cube::Edge::Orientation::kCorrect);
+static constexpr int kFlipped =
+    static_cast<int>(Cube::Edge::Orientation::kFlipped);
+static constexpr int kClockwise =
     static_cast<int>(Cube::Corner::Orientation::kClockwise);
-constexpr int kCounterclockwise =
+static constexpr int kCounterclockwise =
     static_cast<int>(Cube::Corner::Orientation::kCounterclockwise);
 
 typedef void (Cube::*TurnMethod)();
-const TurnMethod kTurnToMethod[] = {&Cube::TurnUpClockwise,
-                                    &Cube::TurnUpHalf,
-                                    &Cube::TurnUpCounterclockwise,
-                                    &Cube::TurnDownClockwise,
-                                    &Cube::TurnDownHalf,
-                                    &Cube::TurnDownCounterclockwise,
-                                    &Cube::TurnRightClockwise,
-                                    &Cube::TurnRightHalf,
-                                    &Cube::TurnRightCounterclockwise,
-                                    &Cube::TurnLeftClockwise,
-                                    &Cube::TurnLeftHalf,
-                                    &Cube::TurnLeftCounterclockwise,
-                                    &Cube::TurnFrontClockwise,
-                                    &Cube::TurnFrontHalf,
-                                    &Cube::TurnFrontCounterclockwise,
-                                    &Cube::TurnBackClockwise,
-                                    &Cube::TurnBackHalf,
-                                    &Cube::TurnBackCounterclockwise};
+static const TurnMethod kTurnToMethod[] = {&Cube::TurnUpClockwise,
+                                           &Cube::TurnUpHalf,
+                                           &Cube::TurnUpCounterclockwise,
+                                           &Cube::TurnDownClockwise,
+                                           &Cube::TurnDownHalf,
+                                           &Cube::TurnDownCounterclockwise,
+                                           &Cube::TurnRightClockwise,
+                                           &Cube::TurnRightHalf,
+                                           &Cube::TurnRightCounterclockwise,
+                                           &Cube::TurnLeftClockwise,
+                                           &Cube::TurnLeftHalf,
+                                           &Cube::TurnLeftCounterclockwise,
+                                           &Cube::TurnFrontClockwise,
+                                           &Cube::TurnFrontHalf,
+                                           &Cube::TurnFrontCounterclockwise,
+                                           &Cube::TurnBackClockwise,
+                                           &Cube::TurnBackHalf,
+                                           &Cube::TurnBackCounterclockwise};
 
-const std::array<Cube::Edge, 12> kSolvedEdges = {
+static const std::array<Cube::Edge, 12> kSolvedEdges = {
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
                Cube::Edge::Position::kUpRight},
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
@@ -89,7 +103,7 @@ const std::array<Cube::Edge, 12> kSolvedEdges = {
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
                Cube::Edge::Position::kLeftBack}};
 
-const std::array<Cube::Corner, 8> kSolvedCorners = {
+static const std::array<Cube::Corner, 8> kSolvedCorners = {
     Cube::Corner{Cube::Corner::Orientation::kCorrect,
                  Cube::Corner::Position::kUpRightFront},
     Cube::Corner{Cube::Corner::Orientation::kCorrect,
@@ -107,10 +121,10 @@ const std::array<Cube::Corner, 8> kSolvedCorners = {
     Cube::Corner{Cube::Corner::Orientation::kCorrect,
                  Cube::Corner::Position::kDownLeftBack}};
 
-constexpr Cube::Edge::Orientation kFlipEdge[2][2] = {
+static constexpr Cube::Edge::Orientation kFlipEdge[2][2] = {
     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Orientation::kFlipped},
     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Orientation::kCorrect}};
-constexpr Cube::Corner::Orientation kTwistCorner[3][3] = {
+static constexpr Cube::Corner::Orientation kTwistCorner[3][3] = {
     {Cube::Corner::Orientation::kCorrect, Cube::Corner::Orientation::kClockwise,
      Cube::Corner::Orientation::kCounterclockwise},
     {Cube::Corner::Orientation::kClockwise,
@@ -120,19 +134,21 @@ constexpr Cube::Corner::Orientation kTwistCorner[3][3] = {
      Cube::Corner::Orientation::kCorrect,
      Cube::Corner::Orientation::kClockwise}};
 
-template <typename T> void cycle2(T &a, T &b) {
+template <typename T> static void cycle2(T &a, T &b) {
     T tempA = a;
     a = b;
     b = tempA;
 }
 
-template <typename T> void cycle4(T &a, T &b, T &c, T &d) {
+template <typename T> static void cycle4(T &a, T &b, T &c, T &d) {
     T tempA = a;
     a = b;
     b = c;
     c = d;
     d = tempA;
 }
+
+namespace cubot {
 
 const Cube Cube::kSolvedCube = Cube();
 
@@ -446,3 +462,5 @@ bool operator==(const Cube::Corner &a, const Cube::Corner &b) {
 bool operator==(const Cube &a, const Cube &b) {
     return a.edges() == b.edges() && a.corners() == b.corners();
 }
+
+} // namespace cubot

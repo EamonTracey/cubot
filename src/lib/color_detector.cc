@@ -8,6 +8,8 @@
 #include "color_detector.h"
 #include "models.h"
 
+namespace cubot {
+
 struct ColorDetector::ONNXImpl {
     Ort::Env env;
     Ort::MemoryInfo memory_info;
@@ -170,3 +172,5 @@ std::vector<float> ColorDetector::RGBToLAB(float r, float g, float b) {
     return {L, a, b_};
 }
 /* CHAT-GPT GENERATED END */
+
+} // namespace cubot

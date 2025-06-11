@@ -1,10 +1,10 @@
 #include "state.h"
 
-constexpr int kPowersOfTwo[] = {1,  2,   4,   8,   16,   32,
-                                64, 128, 256, 512, 1024, 2048};
-constexpr int kPowersOfThree[] = {1, 3, 9, 27, 81, 243, 729, 2187};
+static constexpr int kPowersOfTwo[] = {1,  2,   4,   8,   16,   32,
+                                       64, 128, 256, 512, 1024, 2048};
+static constexpr int kPowersOfThree[] = {1, 3, 9, 27, 81, 243, 729, 2187};
 
-constexpr int kNumberOfBits[2048] = {
+static constexpr int kNumberOfBits[2048] = {
     0, 1, 1, 2,  1, 2,  2,  3, 1, 2, 2, 3, 2, 3, 3, 4,  1, 2, 2, 3, 2, 3, 3, 4,
     2, 3, 3, 4,  3, 4,  4,  5, 1, 2, 2, 3, 2, 3, 3, 4,  2, 3, 3, 4, 3, 4, 4, 5,
     2, 3, 3, 4,  3, 4,  4,  5, 3, 4, 4, 5, 4, 5, 5, 6,  1, 2, 2, 3, 2, 3, 3, 4,
@@ -92,7 +92,7 @@ constexpr int kNumberOfBits[2048] = {
     6, 7, 7, 8,  7, 8,  8,  9, 7, 8, 8, 9, 8, 9, 9, 10, 7, 8, 8, 9, 8, 9, 9, 10,
     8, 9, 9, 10, 9, 10, 10, 11};
 
-constexpr int kNPermuteR[12][12] = {
+static constexpr int kNPermuteR[12][12] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
@@ -108,7 +108,7 @@ constexpr int kNPermuteR[12][12] = {
     {1, 11, 110, 990, 7920, 55440, 332640, 1663200, 6652800, 19958400, 39916800,
      39916800}};
 
-constexpr int kNChooseR[12][12] = {
+static constexpr int kNChooseR[12][12] = {
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -121,6 +121,8 @@ constexpr int kNChooseR[12][12] = {
     {1, 9, 36, 84, 126, 126, 84, 36, 9, 1, 0, 0},
     {1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1, 0},
     {1, 11, 55, 165, 330, 462, 462, 330, 165, 55, 11, 1}};
+
+namespace cubot {
 
 int CalculatePermutationState(std::vector<int> permutation, size_t n) {
     size_t k = permutation.size();
@@ -209,3 +211,5 @@ int CalculateCrossState(const Cube &cube) {
 
     return state;
 }
+
+} // namespace cubot

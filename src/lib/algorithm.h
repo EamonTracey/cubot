@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace cubot {
+
 class Algorithm {
   public:
     enum struct Turn {
@@ -38,5 +40,7 @@ class Algorithm {
   private:
     std::vector<enum Turn> turns_;
 };
+
+} // namespace cubot
 
 #endif
