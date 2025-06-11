@@ -34,6 +34,15 @@ constexpr int downRightBack =
 constexpr int downLeftBack =
     static_cast<int>(Cube::Corner::Position::kDownLeftBack);
 
+static_assert(static_cast<int>(Cube::Edge::Orientation::kCorrect) ==
+              static_cast<int>(Cube::Corner::Orientation::kCorrect));
+constexpr int kCorrect = static_cast<int>(Cube::Edge::Orientation::kCorrect);
+constexpr int kFlipped = static_cast<int>(Cube::Edge::Orientation::kFlipped);
+constexpr int kClockwise =
+    static_cast<int>(Cube::Corner::Orientation::kClockwise);
+constexpr int kCounterclockwise =
+    static_cast<int>(Cube::Corner::Orientation::kCounterclockwise);
+
 typedef void (Cube::*TurnMethod)();
 const TurnMethod kTurnToMethod[] = {&Cube::TurnUpClockwise,
                                     &Cube::TurnUpHalf,
@@ -98,8 +107,18 @@ const std::array<Cube::Corner, 8> kSolvedCorners = {
     Cube::Corner{Cube::Corner::Orientation::kCorrect,
                  Cube::Corner::Position::kDownLeftBack}};
 
-constexpr int kFlipEdge[2][2] = {{0, 1}, {1, 0}};
-constexpr int kTwistCorner[3][3] = {{0, 1, 2}, {1, 2, 0}, {2, 0, 1}};
+constexpr Cube::Edge::Orientation kFlipEdge[2][2] = {
+    {Cube::Edge::Orientation::kCorrect, Cube::Edge::Orientation::kFlipped},
+    {Cube::Edge::Orientation::kFlipped, Cube::Edge::Orientation::kCorrect}};
+constexpr Cube::Corner::Orientation kTwistCorner[3][3] = {
+    {Cube::Corner::Orientation::kCorrect, Cube::Corner::Orientation::kClockwise,
+     Cube::Corner::Orientation::kCounterclockwise},
+    {Cube::Corner::Orientation::kClockwise,
+     Cube::Corner::Orientation::kCounterclockwise,
+     Cube::Corner::Orientation::kCorrect},
+    {Cube::Corner::Orientation::kCounterclockwise,
+     Cube::Corner::Orientation::kCorrect,
+     Cube::Corner::Orientation::kClockwise}};
 
 template <typename T> void cycle2(T &a, T &b) {
     T tempA = a;
@@ -167,6 +186,19 @@ void Cube::TurnRightClockwise() {
            edges_[rightBack]);
     cycle4(corners_[upRightFront], corners_[downRightFront],
            corners_[downRightBack], corners_[upRightBack]);
+
+    corners_[upRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightFront].orientation)]
+                    [kCounterclockwise];
+    corners_[upRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightBack].orientation)]
+                    [kClockwise];
+    corners_[downRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightFront].orientation)]
+                    [kClockwise];
+    corners_[downRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightBack].orientation)]
+                    [kCounterclockwise];
 }
 
 void Cube::TurnRightHalf() {
@@ -181,6 +213,19 @@ void Cube::TurnRightCounterclockwise() {
            edges_[rightFront]);
     cycle4(corners_[upRightFront], corners_[upRightBack],
            corners_[downRightBack], corners_[downRightFront]);
+
+    corners_[upRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightFront].orientation)]
+                    [kCounterclockwise];
+    corners_[upRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightBack].orientation)]
+                    [kClockwise];
+    corners_[downRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightFront].orientation)]
+                    [kClockwise];
+    corners_[downRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightBack].orientation)]
+                    [kCounterclockwise];
 }
 
 void Cube::TurnLeftClockwise() {
@@ -188,6 +233,19 @@ void Cube::TurnLeftClockwise() {
            edges_[leftFront]);
     cycle4(corners_[upLeftFront], corners_[upLeftBack], corners_[downLeftBack],
            corners_[downLeftFront]);
+
+    corners_[upLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftFront].orientation)]
+                    [kClockwise];
+    corners_[upLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftBack].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftBack].orientation)]
+                    [kClockwise];
 }
 
 void Cube::TurnLeftHalf() {
@@ -202,6 +260,19 @@ void Cube::TurnLeftCounterclockwise() {
            edges_[leftBack]);
     cycle4(corners_[upLeftFront], corners_[downLeftFront],
            corners_[downLeftBack], corners_[upLeftBack]);
+
+    corners_[upLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftFront].orientation)]
+                    [kClockwise];
+    corners_[upLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftBack].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftBack].orientation)]
+                    [kClockwise];
 }
 
 void Cube::TurnFrontClockwise() {
@@ -209,6 +280,27 @@ void Cube::TurnFrontClockwise() {
            edges_[rightFront]);
     cycle4(corners_[upRightFront], corners_[upLeftFront],
            corners_[downLeftFront], corners_[downRightFront]);
+
+    edges_[upFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[upFront].orientation)][kFlipped];
+    edges_[downFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[downFront].orientation)][kFlipped];
+    edges_[rightFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[rightFront].orientation)][kFlipped];
+    edges_[leftFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[leftFront].orientation)][kFlipped];
+    corners_[upRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightFront].orientation)]
+                    [kClockwise];
+    corners_[upLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftFront].orientation)]
+                    [kClockwise];
 }
 
 void Cube::TurnFrontHalf() {
@@ -223,6 +315,27 @@ void Cube::TurnFrontCounterclockwise() {
            edges_[leftFront]);
     cycle4(corners_[upRightFront], corners_[downRightFront],
            corners_[downLeftFront], corners_[upLeftFront]);
+
+    edges_[upFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[upFront].orientation)][kFlipped];
+    edges_[downFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[downFront].orientation)][kFlipped];
+    edges_[rightFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[rightFront].orientation)][kFlipped];
+    edges_[leftFront].orientation =
+        kFlipEdge[static_cast<int>(edges_[leftFront].orientation)][kFlipped];
+    corners_[upRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightFront].orientation)]
+                    [kClockwise];
+    corners_[upLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downRightFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightFront].orientation)]
+                    [kCounterclockwise];
+    corners_[downLeftFront].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftFront].orientation)]
+                    [kClockwise];
 }
 
 void Cube::TurnBackClockwise() {
@@ -230,6 +343,27 @@ void Cube::TurnBackClockwise() {
            edges_[leftBack]);
     cycle4(corners_[upRightBack], corners_[downRightBack],
            corners_[downLeftBack], corners_[upLeftBack]);
+
+    edges_[upBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[upBack].orientation)][kFlipped];
+    edges_[downBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[downBack].orientation)][kFlipped];
+    edges_[rightBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[rightBack].orientation)][kFlipped];
+    edges_[leftBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[leftBack].orientation)][kFlipped];
+    corners_[upRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upRightBack].orientation)]
+                    [kCounterclockwise];
+    corners_[upLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[upLeftBack].orientation)]
+                    [kClockwise];
+    corners_[downRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downRightBack].orientation)]
+                    [kClockwise];
+    corners_[downLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[downLeftBack].orientation)]
+                    [kCounterclockwise];
 }
 
 void Cube::TurnBackHalf() {
@@ -244,6 +378,15 @@ void Cube::TurnBackCounterclockwise() {
            edges_[rightBack]);
     cycle4(corners_[upRightBack], corners_[upLeftBack], corners_[downLeftBack],
            corners_[downRightBack]);
+
+    edges_[upBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[upBack].orientation)][kFlipped];
+    edges_[downBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[downBack].orientation)][kFlipped];
+    edges_[rightBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[rightBack].orientation)][kFlipped];
+    edges_[leftBack].orientation =
+        kFlipEdge[static_cast<int>(edges_[leftBack].orientation)][kFlipped];
 }
 
 void Cube::Execute(Algorithm algorithm) {
@@ -260,23 +403,21 @@ void Cube::Apply(const Cube &cube) {
     std::array<struct Cube::Edge, 12> new_edges;
     std::array<struct Cube::Corner, 8> new_corners;
 
-    auto edges_to_apply = cube.edges();
-    auto corners_to_apply = cube.corners();
+    auto &edges_to_apply = cube.edges();
+    auto &corners_to_apply = cube.corners();
     for (size_t i = 0; i < 12; ++i) {
         new_edges[i] =
             edges_[static_cast<size_t>(edges_to_apply[i].solvedPosition)];
-        new_edges[i].orientation = static_cast<enum Cube::Edge::Orientation>(
+        new_edges[i].orientation =
             kFlipEdge[static_cast<int>(new_edges[i].orientation)]
-                     [static_cast<int>(edges_to_apply[i].orientation)]);
+                     [static_cast<int>(edges_to_apply[i].orientation)];
 
         if (i < 8) {
             new_corners[i] = corners_[static_cast<size_t>(
                 corners_to_apply[i].solvedPosition)];
             new_corners[i].orientation =
-                static_cast<enum Cube::Corner::Orientation>(
-                    kTwistCorner[static_cast<int>(new_corners[i].orientation)]
-                                [static_cast<int>(
-                                    corners_to_apply[i].orientation)]);
+                kTwistCorner[static_cast<int>(new_corners[i].orientation)]
+                            [static_cast<int>(corners_to_apply[i].orientation)];
         }
     }
 

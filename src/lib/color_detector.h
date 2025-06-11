@@ -1,5 +1,5 @@
-#ifndef DETECTION_H
-#define DETECTION_H
+#ifndef COLOR_DETECTOR_H
+#define COLOR_DETECTOR_H
 
 #include <cstdint>
 #include <memory>

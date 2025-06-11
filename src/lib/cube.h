@@ -70,6 +70,7 @@ class Cube {
     void Execute(Algorithm algorithm);
     void Execute(Algorithm::Turn turn);
     void Apply(const Cube &cube);
+    void Invert();
 
     const std::array<struct Edge, 12> &edges() const;
     const std::array<struct Corner, 8> &corners() const;

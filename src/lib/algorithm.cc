@@ -1,9 +1,9 @@
+#include "algorithm.h"
+
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "algorithm.h"
 
 const std::unordered_map<std::string, enum Algorithm::Turn> kStringToTurn = {
     {"U", Algorithm::Turn::kUpClockwise},
