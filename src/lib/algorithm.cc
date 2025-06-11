@@ -30,6 +30,8 @@ const std::string kTurnToString[] = {
     "L", "L2", "L'", "F", "F2", "F'", "B", "B2", "B'",
 };
 
+Algorithm::Algorithm() : turns_({}) {}
+
 Algorithm::Algorithm(std::vector<enum Algorithm::Turn> turns) : turns_(turns) {}
 
 Algorithm::Algorithm(std::string stringNotation) {

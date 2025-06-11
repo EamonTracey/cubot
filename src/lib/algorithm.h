@@ -27,6 +27,7 @@ class Algorithm {
         kBackCounterclockwise
     };
 
+    Algorithm();
     Algorithm(std::vector<enum Turn> turns);
     Algorithm(std::string stringNotation);
 

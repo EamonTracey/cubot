@@ -370,7 +370,7 @@ void Cube::TurnBackClockwise() {
 
 void Cube::TurnBackHalf() {
     cycle2(edges_[kUpBack], edges_[kDownBack]);
-    cycle2(edges_[kRightFront], edges_[kLeftFront]);
+    cycle2(edges_[kRightBack], edges_[kLeftBack]);
     cycle2(corners_[kUpRightBack], corners_[kDownLeftBack]);
     cycle2(corners_[kUpLeftBack], corners_[kDownRightBack]);
 }

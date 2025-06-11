@@ -1,6 +1,6 @@
-CC=clang++
-CFLAGS=-Wall -Wconversion -std=c++17
-LIBS=-lonnxruntime -lfmt
+CC = clang++
+CFLAGS = -Wall -Wconversion -std=c++17 -O3
+LIBS = -lonnxruntime
 
 SRC_DIR = src
 SRC_LIB_DIR = $(SRC_DIR)/lib
@@ -19,6 +19,7 @@ OBJ_FILES = $(patsubst $(SRC_LIB_DIR)/%.cc, $(BUILD_OBJ_DIR)/%.o, $(SRC_LIB_CC))
 
 SRC_BIN_CC = $(wildcard $(SRC_BIN_DIR)/*.cc)
 BINARIES = $(patsubst $(SRC_BIN_DIR)/%.cc, $(BUILD_BIN_DIR)/%, $(SRC_BIN_CC))
+BIN_LIBS = -lfmt -l$(LIB_NAME)
 
 SRC_PYTHON_PY = $(wildcard $(SRC_PYTHON_DIR)/*.py)
 
@@ -49,7 +50,7 @@ $(BUILD_LIB_DIR)/lib$(LIB_NAME).a: $(OBJ_FILES)
 # Build the binaries into executables.
 $(BUILD_BIN_DIR)/%: $(SRC_BIN_DIR)/%.cc $(BUILD_LIB_DIR)/lib$(LIB_NAME).a
 	@mkdir -p $(BUILD_BIN_DIR)
-	$(CC) $(CFLAGS) $(LIBS) $< -o $@ -I$(SRC_LIB_DIR) -L$(BUILD_LIB_DIR) -l$(LIB_NAME)
+	$(CC) $(CFLAGS) $(LIBS) $(BIN_LIBS) $< -o $@ -I$(SRC_LIB_DIR) -L$(BUILD_LIB_DIR)
 
 # Format.
 .PHONY: format
