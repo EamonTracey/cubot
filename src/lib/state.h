@@ -5,8 +5,15 @@
 
 namespace cubot {
 
-int CalculatePermutationState(std::vector<int> permutation, size_t n);
-int CalculateCombinationState(std::vector<int> combination);
+// Convert a permutation of k distinct elements each in the range [0, n) to an
+// integer in the range [0, nPk).
+int CalculatePermutationState(const std::vector<int> &permutation, size_t n);
+
+// Convert a combination of k distinct elements to an integer.
+// TODO: Explain better.
+int CalculateCombinationState(const std::vector<int> &combination);
+template <typename Iterable, typename Predicate>
+int CalculateCombinationState(const Iterable &elements, Predicate predicate);
 
 int CalculateEdgeOrientationState(const Cube &cube);
 int CalculateCornerOrientationState(const Cube &cube);

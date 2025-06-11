@@ -124,7 +124,7 @@ static constexpr int kNChooseR[12][12] = {
 
 namespace cubot {
 
-int CalculatePermutationState(std::vector<int> permutation, size_t n) {
+int CalculatePermutationState(const std::vector<int> &permutation, size_t n) {
     size_t k = permutation.size();
 
     int visited = 0;
@@ -139,11 +139,34 @@ int CalculatePermutationState(std::vector<int> permutation, size_t n) {
     return state;
 }
 
-int CalculateCombinationState(std::vector<int> combination) {
+int CalculateCombinationState(const std::vector<int> &combination) {
     int state = 0;
     for (size_t i = 0; i < combination.size(); ++i) {
         int number = combination[i];
         state += kNChooseR[number][i + 1];
+    }
+
+    return state;
+}
+
+template <typename Iterable, typename Predicate>
+int CalculateCombinationState(const Iterable &elements, Predicate predicate) {
+    static_assert(
+        std::is_same_v<
+            decltype(predicate(
+                std::declval<std::decay_t<decltype(*begin(elements))>>())),
+            bool>,
+        "Predicate must be callable with element type and return bool.");
+
+    int state = 0;
+    int i = 0;
+    int r = 1;
+    for (auto &element : elements) {
+        if (predicate(element)) {
+            state += kNChooseR[i][r];
+            ++r;
+        }
+        ++i;
     }
 
     return state;
@@ -172,17 +195,12 @@ int CalculateCornerOrientationState(const Cube &cube) {
 int CalculateEquatorialEdgeCombinationState(const Cube &cube) {
     auto &edges = cube.edges();
 
-    std::vector<int> combination;
-    for (size_t i = 0; i < 12; ++i) {
-        auto &edge = edges[i];
-        if (edge.solvedPosition == Cube::Edge::Position::kRightFront ||
-            edge.solvedPosition == Cube::Edge::Position::kRightBack ||
-            edge.solvedPosition == Cube::Edge::Position::kLeftFront ||
-            edge.solvedPosition == Cube::Edge::Position::kLeftBack)
-            combination.push_back(static_cast<int>(i));
-    }
-
-    int state = CalculateCombinationState(combination);
+    int state = CalculateCombinationState(edges, [](const Cube::Edge &edge) {
+        return edge.solvedPosition == Cube::Edge::Position::kRightFront ||
+               edge.solvedPosition == Cube::Edge::Position::kRightBack ||
+               edge.solvedPosition == Cube::Edge::Position::kLeftFront ||
+               edge.solvedPosition == Cube::Edge::Position::kLeftBack;
+    });
 
     return state;
 }
