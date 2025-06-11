@@ -108,6 +108,20 @@ constexpr int kNPermuteR[12][12] = {
     {1, 11, 110, 990, 7920, 55440, 332640, 1663200, 6652800, 19958400, 39916800,
      39916800}};
 
+constexpr int kNChooseR[12][12] = {
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, 0},
+    {1, 5, 10, 10, 5, 1, 0, 0, 0, 0, 0, 0},
+    {1, 6, 15, 20, 15, 6, 1, 0, 0, 0, 0, 0},
+    {1, 7, 21, 35, 35, 21, 7, 1, 0, 0, 0, 0},
+    {1, 8, 28, 56, 70, 56, 28, 8, 1, 0, 0, 0},
+    {1, 9, 36, 84, 126, 126, 84, 36, 9, 1, 0, 0},
+    {1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1, 0},
+    {1, 11, 55, 165, 330, 462, 462, 330, 165, 55, 11, 1}};
+
 int CalculatePermutationState(std::vector<int> permutation, size_t n) {
     size_t k = permutation.size();
 
@@ -118,6 +132,16 @@ int CalculatePermutationState(std::vector<int> permutation, size_t n) {
         int lehmer = number - kNumberOfBits[visited & ((1 << number) - 1)];
         state += lehmer * kNPermuteR[n - i - 1][k - i - 1];
         visited |= 1 << number;
+    }
+
+    return state;
+}
+
+int CalculateCombinationState(std::vector<int> combination) {
+    int state = 0;
+    for (size_t i = 0; i < combination.size(); ++i) {
+        int number = combination[i];
+        state += kNChooseR[number][i + 1];
     }
 
     return state;
@@ -143,13 +167,31 @@ int CalculateCornerOrientationState(const Cube &cube) {
     return state;
 }
 
+int CalculateEquatorialEdgeCombinationState(const Cube &cube) {
+    auto &edges = cube.edges();
+
+    std::vector<int> combination;
+    for (size_t i = 0; i < 12; ++i) {
+        auto &edge = edges[i];
+        if (edge.solvedPosition == Cube::Edge::Position::kRightFront ||
+            edge.solvedPosition == Cube::Edge::Position::kRightBack ||
+            edge.solvedPosition == Cube::Edge::Position::kLeftFront ||
+            edge.solvedPosition == Cube::Edge::Position::kLeftBack)
+            combination.push_back(static_cast<int>(i));
+    }
+
+    int state = CalculateCombinationState(combination);
+
+    return state;
+}
+
 int CalculateCrossState(const Cube &cube) {
     auto &edges = cube.edges();
 
     int orientation[4];
     int permutation[4];
     for (size_t i = 0; i < 12; ++i) {
-        auto edge = edges[i];
+        auto &edge = edges[i];
         if (static_cast<int>(edge.solvedPosition) < 4) {
             orientation[static_cast<int>(edge.solvedPosition)] =
                 static_cast<int>(edge.orientation);
