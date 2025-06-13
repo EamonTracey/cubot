@@ -405,6 +405,18 @@ void Cube::TurnBackCounterclockwise() {
         kFlipEdge[static_cast<int>(edges_[kRightBack].orientation)][kFlipped];
     edges_[kLeftBack].orientation =
         kFlipEdge[static_cast<int>(edges_[kLeftBack].orientation)][kFlipped];
+    corners_[kUpRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[kUpRightBack].orientation)]
+                    [kCounterclockwise];
+    corners_[kUpLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[kUpLeftBack].orientation)]
+                    [kClockwise];
+    corners_[kDownRightBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[kDownRightBack].orientation)]
+                    [kClockwise];
+    corners_[kDownLeftBack].orientation =
+        kTwistCorner[static_cast<int>(corners_[kDownLeftBack].orientation)]
+                    [kCounterclockwise];
 }
 
 void Cube::Execute(Algorithm algorithm) {

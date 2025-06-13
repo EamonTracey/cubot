@@ -18,6 +18,13 @@ int CalculateCombinationState(const Iterable &elements, Predicate predicate);
 int CalculateEdgeOrientationState(const Cube &cube);
 int CalculateCornerOrientationState(const Cube &cube);
 int CalculateEquatorialEdgeCombinationState(const Cube &cube);
+int CalculateCornerOrientationEquatorialEdgeCombinationState(const Cube &cube);
+int CalculateTetradTwistState(const Cube &cube);
+
+// TODO: Implement true tetrad twist.
+// TODO: Explain reliance on cube state.
+int CalculateThistlethwaiteMiddleEdgeCombinationFirstTetradCombinationTetradTwistState(
+    const Cube &cube);
 
 int CalculateCrossState(const Cube &cube);
 
