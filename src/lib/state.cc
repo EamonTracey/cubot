@@ -129,11 +129,11 @@ static constexpr int kStandingEdges[4] = {0, 1, 4, 5};
 static constexpr int kMiddleEdges[4] = {2, 3, 6, 7};
 static constexpr int kEquatorialEdges[4] = {8, 9, 10, 11};
 static constexpr int kNormalizeStandingEdge[12] = {0, 1,  -1, -1, 2,
-                                               3, -1, -1, -1, -1};
+                                                   3, -1, -1, -1, -1};
 static constexpr int kNormalizeMiddleEdge[12] = {-1, -1, 0,  1,  -1, -1,
-                                             2,  3,  -1, -1, -1, -1};
+                                                 2,  3,  -1, -1, -1, -1};
 static constexpr int kNormalizeEquatorialEdge[12] = {-1, -1, -1, -1, -1, -1,
-                                                 -1, -1, 0,  1,  2,  3};
+                                                     -1, -1, 0,  1,  2,  3};
 
 static constexpr int kOuter = 0;
 static constexpr int kInner = 1;
@@ -347,8 +347,9 @@ int CalculateG3State(const Cube &cube) {
         middle_permutation.push_back(kNormalizeMiddleEdge[static_cast<int>(
             edges[static_cast<size_t>(i)].solvedPosition)]);
     for (int i : kEquatorialEdges)
-        equatorial_permutation.push_back(kNormalizeEquatorialEdge[static_cast<int>(
-            edges[static_cast<size_t>(i)].solvedPosition)]);
+        equatorial_permutation.push_back(
+            kNormalizeEquatorialEdge[static_cast<int>(
+                edges[static_cast<size_t>(i)].solvedPosition)]);
     for (int i : kOuterCorners)
         outer_permutation.push_back(kNormalizeOuterCorner[static_cast<int>(
             corners[static_cast<size_t>(i)].solvedPosition)]);

@@ -1,6 +1,8 @@
 #ifndef PRUNE_H
 #define PRUNE_H
 
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #include "algorithm.h"
@@ -13,6 +15,9 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
                         const Cube &goal_cube,
                         const std::vector<Algorithm::Turn> &turns);
 
-}
+void WritePruneTable(std::string path, uint8_t *prune_table,
+                     size_t prune_table_len);
+
+} // namespace cubot
 
 #endif

@@ -16,14 +16,20 @@ class ThistlethwaiteSolver {
     static const int kThistlethwaitePhase4Size = 663552;
 
     ThistlethwaiteSolver();
+    ThistlethwaiteSolver(const std::string &path1, const std::string &path2,
+                         const std::string &path3, const std::string &path4);
     ~ThistlethwaiteSolver() {}
 
     Algorithm Solve(const Cube &cube);
 
-    void GeneratePruneTable1(uint8_t prune_table_1[kThistlethwaitePhase1Size]);
-    void GeneratePruneTable2(uint8_t prune_table_2[kThistlethwaitePhase2Size]);
-    void GeneratePruneTable3(uint8_t prune_table_3[kThistlethwaitePhase3Size]);
-    void GeneratePruneTable4(uint8_t prune_table_4[kThistlethwaitePhase4Size]);
+    static void
+    GeneratePruneTable1(uint8_t prune_table_1[kThistlethwaitePhase1Size]);
+    static void
+    GeneratePruneTable2(uint8_t prune_table_2[kThistlethwaitePhase2Size]);
+    static void
+    GeneratePruneTable3(uint8_t prune_table_3[kThistlethwaitePhase3Size]);
+    static void
+    GeneratePruneTable4(uint8_t prune_table_4[kThistlethwaitePhase4Size]);
 
   private:
     uint8_t prune_table_1_[kThistlethwaitePhase1Size];

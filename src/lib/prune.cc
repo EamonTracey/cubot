@@ -1,6 +1,9 @@
 #include "prune.h"
 
+#include <cstdint>
 #include <deque>
+#include <fstream>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -37,6 +40,13 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
                 frontier.push_back({neighbor, neighbor_state, neighbor_depth});
         }
     }
+}
+
+void WritePruneTable(std::string path, uint8_t *prune_table,
+                     size_t prune_table_len) {
+    std::ofstream out(path, std::ios::binary);
+    out.write(reinterpret_cast<const char *>(prune_table),
+              static_cast<std::streamsize>(prune_table_len));
 }
 
 } // namespace cubot
