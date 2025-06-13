@@ -7,8 +7,6 @@
 #include "algorithm.h"
 #include "cube.h"
 
-#include <iostream>
-
 namespace cubot {
 
 void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
@@ -21,8 +19,6 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
         uint8_t depth;
     };
 
-    int actual = 0;
-
     std::deque<struct Entry> frontier = {
         {goal_cube, calculate_state(goal_cube), 0}};
     std::unordered_set<int> visited = {calculate_state(goal_cube)};
@@ -31,8 +27,6 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
         frontier.pop_front();
 
         prune_table[entry.state] = entry.depth;
-
-        ++actual;
 
         for (auto turn : turns) {
             Cube neighbor = entry.cube;
@@ -43,8 +37,6 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
                 frontier.push_back({neighbor, neighbor_state, neighbor_depth});
         }
     }
-
-    std::cout << "actual: " << actual << std::endl;
 }
 
 } // namespace cubot

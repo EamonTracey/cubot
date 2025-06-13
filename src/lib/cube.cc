@@ -157,6 +157,12 @@ Cube::Cube() {
     corners_ = kSolvedCorners;
 }
 
+Cube::Cube(const std::array<struct Edge, 12> &edges,
+           const std::array<struct Corner, 8> &corners) {
+    edges_ = edges;
+    corners_ = corners;
+}
+
 void Cube::TurnUpClockwise() {
     cycle4(edges_[kUpRight], edges_[kUpBack], edges_[kUpLeft],
            edges_[kUpFront]);

@@ -15,16 +15,17 @@ int CalculateCombinationState(const std::vector<int> &combination);
 template <typename Iterable, typename Predicate>
 int CalculateCombinationState(const Iterable &elements, Predicate predicate);
 
+int CalculateEdgePermutationState(const Cube &cube);
+int CalculateCornerPermutationState(const Cube &cube);
 int CalculateEdgeOrientationState(const Cube &cube);
 int CalculateCornerOrientationState(const Cube &cube);
+int CalculateParityState(const Cube &cube);
+
 int CalculateEquatorialEdgeCombinationState(const Cube &cube);
 int CalculateCornerOrientationEquatorialEdgeCombinationState(const Cube &cube);
-int CalculateTetradTwistState(const Cube &cube);
-
-// TODO: Implement true tetrad twist.
-// TODO: Explain reliance on cube state.
-int CalculateThistlethwaiteMiddleEdgeCombinationFirstTetradCombinationTetradTwistState(
+int CalculateG2MiddleEdgeCombinationTetradPairsCombinationState(
     const Cube &cube);
+int CalculateG3State(const Cube &cube);
 
 int CalculateCrossState(const Cube &cube);
 

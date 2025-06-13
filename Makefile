@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -Wall -Wconversion -std=c++17 -O3
+CFLAGS = -Wall -Wconversion -Wno-unused-const-variable -std=c++17 -O3
 LIBS = -lonnxruntime
 
 SRC_DIR = src

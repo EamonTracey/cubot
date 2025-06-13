@@ -58,12 +58,18 @@ static const std::vector<Algorithm::Turn> kThistlethwaitePhase3Turns = {
     Algorithm::Turn::kFrontHalf,
     Algorithm::Turn::kBackHalf};
 
+static const std::vector<Algorithm::Turn> kThistlethwaitePhase4Turns = {
+    Algorithm::Turn::kUpHalf,    Algorithm::Turn::kDownHalf,
+    Algorithm::Turn::kRightHalf, Algorithm::Turn::kLeftHalf,
+    Algorithm::Turn::kFrontHalf, Algorithm::Turn::kBackHalf};
+
 namespace cubot {
 
 ThistlethwaiteSolver::ThistlethwaiteSolver() {
     GeneratePruneTable1(prune_table_1_);
     GeneratePruneTable2(prune_table_2_);
     GeneratePruneTable3(prune_table_3_);
+    GeneratePruneTable4(prune_table_4_);
 }
 
 Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) {
@@ -78,11 +84,14 @@ Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) {
                 CalculateCornerOrientationEquatorialEdgeCombinationState,
                 Cube::kSolvedCube, kThistlethwaitePhase2Turns);
     copy.Execute(phase2);
-    Algorithm phase3 = ::Solve(
-        copy, prune_table_3_, kThistlethwaitePhase3Size,
-        CalculateThistlethwaiteMiddleEdgeCombinationFirstTetradCombinationTetradTwistState,
-        Cube::kSolvedCube, kThistlethwaitePhase3Turns);
+    Algorithm phase3 =
+        ::Solve(copy, prune_table_3_, kThistlethwaitePhase3Size,
+                CalculateG2MiddleEdgeCombinationTetradPairsCombinationState,
+                Cube::kSolvedCube, kThistlethwaitePhase3Turns);
     copy.Execute(phase3);
+    Algorithm phase4 = ::Solve(copy, prune_table_4_, kThistlethwaitePhase4Size,
+                               CalculateG3State, Cube::kSolvedCube,
+                               kThistlethwaitePhase4Turns);
 
     std::vector<Algorithm::Turn> solution;
     for (auto turn : phase1.turns())
@@ -90,6 +99,8 @@ Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) {
     for (auto turn : phase2.turns())
         solution.push_back(turn);
     for (auto turn : phase3.turns())
+        solution.push_back(turn);
+    for (auto turn : phase4.turns())
         solution.push_back(turn);
     return solution;
 }
@@ -112,8 +123,15 @@ void ThistlethwaiteSolver::GeneratePruneTable3(
     uint8_t prune_table_3[kThistlethwaitePhase3Size]) {
     GeneratePruneTable(
         prune_table_3_, kThistlethwaitePhase3Size,
-        CalculateThistlethwaiteMiddleEdgeCombinationFirstTetradCombinationTetradTwistState,
+        CalculateG2MiddleEdgeCombinationTetradPairsCombinationState,
         Cube::kSolvedCube, kThistlethwaitePhase3Turns);
+}
+
+void ThistlethwaiteSolver::GeneratePruneTable4(
+    uint8_t prune_table_4[kThistlethwaitePhase4Size]) {
+    GeneratePruneTable(prune_table_4_, kThistlethwaitePhase4Size,
+                       CalculateG3State, Cube::kSolvedCube,
+                       kThistlethwaitePhase4Turns);
 }
 
 } // namespace cubot

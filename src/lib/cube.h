@@ -48,6 +48,8 @@ class Cube {
     static const Cube kSolvedCube;
 
     Cube();
+    Cube(const std::array<struct Edge, 12> &edges,
+         const std::array<struct Corner, 8> &corners);
     ~Cube() {}
 
     void TurnUpClockwise();

@@ -9,7 +9,7 @@
 namespace cubot {
 
 Algorithm Solve(const Cube &cube, uint8_t *prune_table, size_t prune_table_len,
-                int (*calculate_state)(const Cube &cube), const Cube &goal_cube,
+                int (*prune_state)(const Cube &cube), const Cube &goal_cube,
                 const std::vector<Algorithm::Turn> &turns) {
     struct Entry {
         Cube cube;
@@ -18,12 +18,12 @@ Algorithm Solve(const Cube &cube, uint8_t *prune_table, size_t prune_table_len,
         Algorithm::Turn turn;
     };
 
-    const int kGoalState = calculate_state(goal_cube);
+    const int kGoalState = prune_state(goal_cube);
 
     std::vector<Algorithm::Turn> path;
     for (int depth = 0;; ++depth) {
         std::stack<Entry> frontier;
-        frontier.push({cube, calculate_state(cube), 0});
+        frontier.push({cube, prune_state(cube), 0});
         path.resize(static_cast<size_t>(depth));
         while (frontier.size() > 0) {
             struct Entry entry = frontier.top();
@@ -44,7 +44,7 @@ Algorithm Solve(const Cube &cube, uint8_t *prune_table, size_t prune_table_len,
             for (auto turn : turns) {
                 Cube neighbor = entry.cube;
                 neighbor.Execute(turn);
-                int neighbor_state = calculate_state(neighbor);
+                int neighbor_state = prune_state(neighbor);
                 int neighbor_depth = entry.depth + 1;
                 frontier.push({neighbor, neighbor_state, neighbor_depth, turn});
             }
