@@ -83,7 +83,7 @@ ThistlethwaiteSolver::ThistlethwaiteSolver(const std::string &path1,
     ReadPruneTable(path4, prune_table_4_, kThistlethwaitePruneTable4Size);
 }
 
-Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) {
+Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) const {
     Cube copy = cube;
 
     Algorithm phase1 =

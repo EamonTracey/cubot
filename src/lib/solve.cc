@@ -52,8 +52,9 @@ Algorithm Solve(const Cube &cube,
     }
 }
 
-Algorithm Solve(const Cube &cube, uint8_t *prune_table, size_t prune_table_len,
-                int (*prune_state)(const Cube &cube), const Cube &goal_cube,
+Algorithm Solve(const Cube &cube, const uint8_t *prune_table,
+                size_t prune_table_len, int (*prune_state)(const Cube &cube),
+                const Cube &goal_cube,
                 const std::vector<Algorithm::Turn> &turns) {
     const int kGoalState = prune_state(goal_cube);
     auto heuristic = [&](const Cube &cube) {

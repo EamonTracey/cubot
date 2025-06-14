@@ -20,7 +20,7 @@ class ThistlethwaiteSolver {
                          const std::string &path3, const std::string &path4);
     ~ThistlethwaiteSolver() {}
 
-    Algorithm Solve(const Cube &cube);
+    Algorithm Solve(const Cube &cube) const;
 
     static void
     GeneratePruneTable1(uint8_t prune_table_1[kThistlethwaitePruneTable1Size]);

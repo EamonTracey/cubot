@@ -60,7 +60,7 @@ TwoPhaseSolver::TwoPhaseSolver(const std::string &path1,
     ReadPruneTable(path4, prune_table_4_, kTwoPhasePruneTable4Size);
 }
 
-Algorithm TwoPhaseSolver::Solve(const Cube &cube) {
+Algorithm TwoPhaseSolver::Solve(const Cube &cube) const {
     Cube copy = cube;
 
     auto phase_one_heuristic = [&](const Cube &cube) {
