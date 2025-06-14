@@ -15,8 +15,11 @@ void GeneratePruneTable(uint8_t *prune_table, size_t prune_table_len,
                         const Cube &goal_cube,
                         const std::vector<Algorithm::Turn> &turns);
 
-void WritePruneTable(std::string path, uint8_t *prune_table,
+void WritePruneTable(const std::string &path, const uint8_t *prune_table,
                      size_t prune_table_len);
+
+void ReadPruneTable(const std::string &path, uint8_t *prune_table,
+                    size_t prune_table_len);
 
 } // namespace cubot
 
