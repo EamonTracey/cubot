@@ -297,7 +297,8 @@ int CalculateTetradPairsCombinationState(const Cube &cube) {
         if (corner.solved_position != Cube::Corner::Position::kUpRightFront &&
             corner.solved_position != Cube::Corner::Position::kUpLeftBack) {
             corners6[i6++] = corner;
-            if (corner.solved_position != Cube::Corner::Position::kUpRightBack &&
+            if (corner.solved_position !=
+                    Cube::Corner::Position::kUpRightBack &&
                 corner.solved_position != Cube::Corner::Position::kUpLeftFront)
                 corners4[i4++] = corner;
         }
@@ -307,7 +308,8 @@ int CalculateTetradPairsCombinationState(const Cube &cube) {
         CalculateCombinationState(corners8, [](const Cube::Corner &corner) {
             return corner.solved_position ==
                        Cube::Corner::Position::kUpRightFront ||
-                   corner.solved_position == Cube::Corner::Position::kUpLeftBack;
+                   corner.solved_position ==
+                       Cube::Corner::Position::kUpLeftBack;
         });
 
     int pair6_combination_state =

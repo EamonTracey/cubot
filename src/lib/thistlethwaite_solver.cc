@@ -105,15 +105,18 @@ Algorithm ThistlethwaiteSolver::Solve(const Cube &cube) const {
                                kThistlethwaitePruneTable4Size, CalculateG3State,
                                Cube::kSolvedCube, kThistlethwaitePhase4Turns);
 
-    std::vector<Algorithm::Turn> solution;
+    std::vector<Algorithm::Turn> phases;
     for (auto turn : phase1.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
     for (auto turn : phase2.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
     for (auto turn : phase3.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
     for (auto turn : phase4.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
+
+    Algorithm solution(phases);
+    solution.Compress();
     return solution;
 }
 

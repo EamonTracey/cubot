@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         TwoPhaseSolver two_phase_solver =
             argc == 3 ? TwoPhaseSolver()
                       : TwoPhaseSolver(argv[3], argv[4], argv[5], argv[6]);
-        solution = two_phase_solver.Solve(cube);
+        solution = two_phase_solver.Solve(cube, -1);
     } else {
         return EXIT_FAILURE;
     }

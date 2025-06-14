@@ -60,9 +60,7 @@ TwoPhaseSolver::TwoPhaseSolver(const std::string &path1,
     ReadPruneTable(path4, prune_table_4_, kTwoPhasePruneTable4Size);
 }
 
-Algorithm TwoPhaseSolver::Solve(const Cube &cube) const {
-    Cube copy = cube;
-
+Algorithm TwoPhaseSolver::Solve(const Cube &cube, int extra_depths) const {
     auto phase_one_heuristic = [&](const Cube &cube) {
         return std::max(
             prune_table_1_
@@ -98,17 +96,35 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube) const {
         return cube == Cube::kSolvedCube;
     };
 
-    Algorithm phase1 = ::Solve(copy, phase_one_heuristic,
-                               phase_one_goal_predicate, kTwoPhasePhase1Turns);
-    copy.Execute(phase1);
-    Algorithm phase2 = ::Solve(copy, phase_two_heuristic,
-                               phase_two_goal_predicate, kTwoPhasePhase2Turns);
+    int depth = -1;
+    Algorithm phase1;
+    Algorithm phase2;
+    std::vector<Algorithm> potential_phase1s =
+        ::Solve(cube, phase_one_heuristic, phase_one_goal_predicate,
+                kTwoPhasePhase1Turns, extra_depths);
+    for (auto &potential_phase1 : potential_phase1s) {
+        Cube copy = cube;
+        copy.Execute(potential_phase1);
+        Algorithm potential_phase2 =
+            ::Solve(copy, phase_two_heuristic, phase_two_goal_predicate,
+                    kTwoPhasePhase2Turns);
+        int potential_depth = static_cast<int>(potential_phase1.turns().size() +
+                                               potential_phase2.turns().size());
+        if (depth < 0 || potential_depth < depth) {
+            phase1 = potential_phase1;
+            phase2 = potential_phase2;
+            depth = potential_depth;
+        }
+    }
 
-    std::vector<Algorithm::Turn> solution;
+    std::vector<Algorithm::Turn> phases;
     for (auto turn : phase1.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
     for (auto turn : phase2.turns())
-        solution.push_back(turn);
+        phases.push_back(turn);
+
+    Algorithm solution(phases);
+    solution.Compress();
     return solution;
 }
 

@@ -20,7 +20,7 @@ class TwoPhaseSolver {
                    const std::string &path3, const std::string &path4);
     ~TwoPhaseSolver() {}
 
-    Algorithm Solve(const Cube &cube) const;
+    Algorithm Solve(const Cube &cube, int extra_depths) const;
 
     static void
     GeneratePruneTable1(uint8_t prune_table_1[kTwoPhasePruneTable1Size]);
