@@ -6,6 +6,8 @@
 namespace cubot {
 
 /*
+ * Subgroups of the cube group G0.
+ *
  * G0 = <U, D, R, L, F, B>
  * G1 = <U, D, R, L, F2, B2>
  * G2 = <U, D, R2, L2, F2, B2>
@@ -18,7 +20,6 @@ namespace cubot {
 int CalculatePermutationState(const std::vector<int> &permutation, size_t n);
 
 // Convert a combination of k distinct elements to an integer.
-// TODO: Explain better.
 int CalculateCombinationState(const std::vector<int> &combination);
 template <typename Iterable, typename Predicate>
 int CalculateCombinationState(const Iterable &elements, Predicate predicate);
@@ -32,11 +33,15 @@ int CalculateParityState(const Cube &cube);
 int CalculateEquatorialEdgeCombinationState(const Cube &cube);
 int CalculateEdgeOrientationEquatorialEdgeCombinationState(const Cube &cube);
 int CalculateCornerOrientationEquatorialEdgeCombinationState(const Cube &cube);
+int CalculateTetradsCombinationState(const Cube &cube);
+int CalculateTetradPairsCombinationState(const Cube &cube);
 
+int CalculateG2SlicesCombinationState(const Cube &cube);
 int CalculateG2SlicesCombinationTetradPairsCombinationState(const Cube &cube);
+int CalculateG2StandingMiddleEdgePermutationState(const Cube &cube);
 int CalculateG2StandingMiddleEdgePermutationTetradsCombinationState(
     const Cube &cube);
-int CalculateG2CornerPermutationSlicesCombinationState(const Cube &cube);
+int CalculateCornerPermutationG2SlicesCombinationState(const Cube &cube);
 int CalculateG3State(const Cube &cube);
 
 int CalculateCrossState(const Cube &cube);

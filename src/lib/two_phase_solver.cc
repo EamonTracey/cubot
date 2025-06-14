@@ -91,7 +91,7 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube) {
             prune_table_3_
                 [CalculateG2StandingMiddleEdgePermutationTetradsCombinationState(
                     cube)],
-            prune_table_4_[CalculateG2CornerPermutationSlicesCombinationState(
+            prune_table_4_[CalculateCornerPermutationG2SlicesCombinationState(
                 cube)]);
     };
     auto phase_two_goal_predicate = [&](const Cube &cube) {
@@ -109,7 +109,6 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube) {
         solution.push_back(turn);
     for (auto turn : phase2.turns())
         solution.push_back(turn);
-
     return solution;
 }
 
@@ -138,7 +137,7 @@ void TwoPhaseSolver::GeneratePruneTable3(
 void TwoPhaseSolver::GeneratePruneTable4(
     uint8_t prune_table_4[kTwoPhasePruneTable4Size]) {
     GeneratePruneTable(prune_table_4, kTwoPhasePruneTable4Size,
-                       CalculateG2CornerPermutationSlicesCombinationState,
+                       CalculateCornerPermutationG2SlicesCombinationState,
                        Cube::kSolvedCube, kTwoPhasePhase2Turns);
 }
 

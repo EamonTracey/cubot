@@ -274,11 +274,20 @@ int CalculateEdgeOrientationEquatorialEdgeCombinationState(const Cube &cube) {
     return state;
 }
 
-int CalculateG2SlicesCombinationTetradPairsCombinationState(const Cube &cube) {
-    auto &edges = cube.edges();
+int CalculateTetradsCombinationState(const Cube &cube) {
     auto &corners = cube.corners();
 
-    // TODO: Explain better.
+    int state =
+        CalculateCombinationState(corners, [](const Cube::Corner &corner) {
+            return kTetrad[static_cast<int>(corner.solvedPosition)] == kOuter;
+        });
+
+    return state;
+}
+
+int CalculateTetradPairsCombinationState(const Cube &cube) {
+    auto &corners = cube.corners();
+
     const std::array<Cube::Corner, 8> &corners8 = corners;
     std::array<Cube::Corner, 6> corners6;
     std::array<Cube::Corner, 4> corners4;
@@ -294,16 +303,6 @@ int CalculateG2SlicesCombinationTetradPairsCombinationState(const Cube &cube) {
         }
     }
 
-    // This function assumes the equatorial edges are in the equatorial slice.
-    // Conveniently, the set indices that correspond to the equatorial edges is
-    // {8, 9, 10, 11}. Therefore, the index of each standing edge is in the set
-    // {0, 1, 2, 3, 4, 5, 6, 7}, so we do not need to shrink the elements input
-    // for this 4-combination of 8 elements. We could choose to pass
-    // std::vector(edges.begin(), edges.begin() + 8).
-    int g2_slices_combination_state =
-        CalculateCombinationState(edges, [](const Cube::Edge &edge) {
-            return kSlice[static_cast<int>(edge.solvedPosition)] == kStanding;
-        });
     int pair8_combination_state =
         CalculateCombinationState(corners8, [](const Cube::Corner &corner) {
             return corner.solvedPosition ==
@@ -325,31 +324,60 @@ int CalculateG2SlicesCombinationTetradPairsCombinationState(const Cube &cube) {
                    corner.solvedPosition ==
                        Cube::Corner::Position::kDownLeftBack;
         });
+
+    int state = pair8_combination_state + pair6_combination_state * 28 +
+                pair4_combination_state * 420;
+
+    return state;
+}
+
+int CalculateG2SlicesCombinationState(const Cube &cube) {
+    auto &edges = cube.edges();
+
+    // This function assumes the equatorial edges are in the equatorial slice.
+    // Conveniently, the set indices that correspond to the equatorial edges is
+    // {8, 9, 10, 11}. Therefore, the index of each standing edge is in the set
+    // {0, 1, 2, 3, 4, 5, 6, 7}, so we do not need to shrink the elements input
+    // for this 4-combination of 8 elements. We could choose to pass
+    // std::vector(edges.begin(), edges.begin() + 8).
+    int state = CalculateCombinationState(edges, [](const Cube::Edge &edge) {
+        return kSlice[static_cast<int>(edge.solvedPosition)] == kStanding;
+    });
+
+    return state;
+}
+
+int CalculateG2SlicesCombinationTetradPairsCombinationState(const Cube &cube) {
+    int g2_slices_combination_state = CalculateG2SlicesCombinationState(cube);
+    int tetrad_pairs_combination_state =
+        CalculateTetradPairsCombinationState(cube);
     int parity_state = CalculateParityState(cube);
 
-    int state = g2_slices_combination_state + pair8_combination_state * 70 +
-                pair6_combination_state * 1960 +
-                pair4_combination_state * 29400 + parity_state * 176400;
+    int state = g2_slices_combination_state +
+                tetrad_pairs_combination_state * 70 + parity_state * 176400;
+
+    return state;
+}
+
+int CalculateG2StandingMiddleEdgePermutationState(const Cube &cube) {
+    auto &edges = cube.edges();
+
+    std::vector<int> g2_standing_middle_edge_permutation;
+    for (size_t i = 0; i < 8; ++i)
+        g2_standing_middle_edge_permutation.push_back(
+            static_cast<int>(edges[i].solvedPosition));
+
+    int state =
+        CalculatePermutationState(g2_standing_middle_edge_permutation, 8);
 
     return state;
 }
 
 int CalculateG2StandingMiddleEdgePermutationTetradsCombinationState(
     const Cube &cube) {
-    auto &edges = cube.edges();
-    auto &corners = cube.corners();
-
-    std::vector<int> standing_middle_edge_permutation;
-    for (size_t i = 0; i < 8; ++i)
-        standing_middle_edge_permutation.push_back(
-            static_cast<int>(edges[i].solvedPosition));
-
     int g2_standing_middle_edge_permutation_state =
-        CalculatePermutationState(standing_middle_edge_permutation, 8);
-    int tetrads_combination_state =
-        CalculateCombinationState(corners, [](const Cube::Corner &corner) {
-            return kTetrad[static_cast<int>(corner.solvedPosition)] == kOuter;
-        });
+        CalculateG2StandingMiddleEdgePermutationState(cube);
+    int tetrads_combination_state = CalculateTetradsCombinationState(cube);
 
     int state = g2_standing_middle_edge_permutation_state +
                 tetrads_combination_state * 40320;
@@ -357,14 +385,9 @@ int CalculateG2StandingMiddleEdgePermutationTetradsCombinationState(
     return state;
 }
 
-int CalculateG2CornerPermutationSlicesCombinationState(const Cube &cube) {
-    auto &edges = cube.edges();
-
+int CalculateCornerPermutationG2SlicesCombinationState(const Cube &cube) {
     int corner_permutation = CalculateCornerPermutationState(cube);
-    int g2_slices_combination_state =
-        CalculateCombinationState(edges, [](const Cube::Edge &edge) {
-            return kSlice[static_cast<int>(edge.solvedPosition)] == kStanding;
-        });
+    int g2_slices_combination_state = CalculateG2SlicesCombinationState(cube);
 
     int state = corner_permutation + g2_slices_combination_state * 40320;
 
@@ -375,7 +398,6 @@ int CalculateG3State(const Cube &cube) {
     auto &edges = cube.edges();
     auto &corners = cube.corners();
 
-    // TODO: Explain better.
     std::vector<int> standing_permutation;
     std::vector<int> middle_permutation;
     std::vector<int> equatorial_permutation;
