@@ -443,14 +443,14 @@ void Cube::Apply(const Cube &cube) {
     auto &corners_to_apply = cube.corners();
     for (size_t i = 0; i < 12; ++i) {
         new_edges[i] =
-            edges_[static_cast<size_t>(edges_to_apply[i].solvedPosition)];
+            edges_[static_cast<size_t>(edges_to_apply[i].solved_position)];
         new_edges[i].orientation =
             kFlipEdge[static_cast<int>(new_edges[i].orientation)]
                      [static_cast<int>(edges_to_apply[i].orientation)];
 
         if (i < 8) {
             new_corners[i] = corners_[static_cast<size_t>(
-                corners_to_apply[i].solvedPosition)];
+                corners_to_apply[i].solved_position)];
             new_corners[i].orientation =
                 kTwistCorner[static_cast<int>(new_corners[i].orientation)]
                             [static_cast<int>(corners_to_apply[i].orientation)];
@@ -469,12 +469,12 @@ const std::array<struct Cube::Corner, 8> &Cube::corners() const {
 
 bool operator==(const Cube::Edge &a, const Cube::Edge &b) {
     return a.orientation == b.orientation &&
-           a.solvedPosition == b.solvedPosition;
+           a.solved_position == b.solved_position;
 }
 
 bool operator==(const Cube::Corner &a, const Cube::Corner &b) {
     return a.orientation == b.orientation &&
-           a.solvedPosition == b.solvedPosition;
+           a.solved_position == b.solved_position;
 }
 
 bool operator==(const Cube &a, const Cube &b) {

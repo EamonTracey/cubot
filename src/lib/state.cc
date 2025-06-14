@@ -196,14 +196,14 @@ int CalculateCombinationState(const Iterable &elements, Predicate predicate) {
 int CalculateEdgePermutationState(const Cube &cube) {
     std::vector<int> permutation;
     for (auto edge : cube.edges())
-        permutation.push_back(static_cast<int>(edge.solvedPosition));
+        permutation.push_back(static_cast<int>(edge.solved_position));
     return CalculatePermutationState(permutation, 12);
 }
 
 int CalculateCornerPermutationState(const Cube &cube) {
     std::vector<int> permutation;
     for (auto corner : cube.corners())
-        permutation.push_back(static_cast<int>(corner.solvedPosition));
+        permutation.push_back(static_cast<int>(corner.solved_position));
     return CalculatePermutationState(permutation, 8);
 }
 
@@ -233,8 +233,8 @@ int CalculateParityState(const Cube &cube) {
     int inversions = 0;
     for (size_t i = 0; i < 8; ++i)
         for (size_t j = i + 1; j < 8; ++j)
-            if (static_cast<int>(corners[i].solvedPosition) <
-                static_cast<int>(corners[j].solvedPosition))
+            if (static_cast<int>(corners[i].solved_position) <
+                static_cast<int>(corners[j].solved_position))
                 inversions++;
 
     int state = inversions % 2;
@@ -246,7 +246,7 @@ int CalculateEquatorialEdgeCombinationState(const Cube &cube) {
     auto &edges = cube.edges();
 
     int state = CalculateCombinationState(edges, [](const Cube::Edge &edge) {
-        return kSlice[static_cast<int>(edge.solvedPosition)] == kEquatorial;
+        return kSlice[static_cast<int>(edge.solved_position)] == kEquatorial;
     });
 
     return state;
@@ -279,7 +279,7 @@ int CalculateTetradsCombinationState(const Cube &cube) {
 
     int state =
         CalculateCombinationState(corners, [](const Cube::Corner &corner) {
-            return kTetrad[static_cast<int>(corner.solvedPosition)] == kOuter;
+            return kTetrad[static_cast<int>(corner.solved_position)] == kOuter;
         });
 
     return state;
@@ -294,34 +294,34 @@ int CalculateTetradPairsCombinationState(const Cube &cube) {
     size_t i6 = 0;
     size_t i4 = 0;
     for (const auto &corner : corners) {
-        if (corner.solvedPosition != Cube::Corner::Position::kUpRightFront &&
-            corner.solvedPosition != Cube::Corner::Position::kUpLeftBack) {
+        if (corner.solved_position != Cube::Corner::Position::kUpRightFront &&
+            corner.solved_position != Cube::Corner::Position::kUpLeftBack) {
             corners6[i6++] = corner;
-            if (corner.solvedPosition != Cube::Corner::Position::kUpRightBack &&
-                corner.solvedPosition != Cube::Corner::Position::kUpLeftFront)
+            if (corner.solved_position != Cube::Corner::Position::kUpRightBack &&
+                corner.solved_position != Cube::Corner::Position::kUpLeftFront)
                 corners4[i4++] = corner;
         }
     }
 
     int pair8_combination_state =
         CalculateCombinationState(corners8, [](const Cube::Corner &corner) {
-            return corner.solvedPosition ==
+            return corner.solved_position ==
                        Cube::Corner::Position::kUpRightFront ||
-                   corner.solvedPosition == Cube::Corner::Position::kUpLeftBack;
+                   corner.solved_position == Cube::Corner::Position::kUpLeftBack;
         });
 
     int pair6_combination_state =
         CalculateCombinationState(corners6, [](const Cube::Corner &corner) {
-            return corner.solvedPosition ==
+            return corner.solved_position ==
                        Cube::Corner::Position::kUpRightBack ||
-                   corner.solvedPosition ==
+                   corner.solved_position ==
                        Cube::Corner::Position::kUpLeftFront;
         });
     int pair4_combination_state =
         CalculateCombinationState(corners4, [](const Cube::Corner &corner) {
-            return corner.solvedPosition ==
+            return corner.solved_position ==
                        Cube::Corner::Position::kDownRightFront ||
-                   corner.solvedPosition ==
+                   corner.solved_position ==
                        Cube::Corner::Position::kDownLeftBack;
         });
 
@@ -341,7 +341,7 @@ int CalculateG2SlicesCombinationState(const Cube &cube) {
     // for this 4-combination of 8 elements. We could choose to pass
     // std::vector(edges.begin(), edges.begin() + 8).
     int state = CalculateCombinationState(edges, [](const Cube::Edge &edge) {
-        return kSlice[static_cast<int>(edge.solvedPosition)] == kStanding;
+        return kSlice[static_cast<int>(edge.solved_position)] == kStanding;
     });
 
     return state;
@@ -365,7 +365,7 @@ int CalculateG2StandingMiddleEdgePermutationState(const Cube &cube) {
     std::vector<int> g2_standing_middle_edge_permutation;
     for (size_t i = 0; i < 8; ++i)
         g2_standing_middle_edge_permutation.push_back(
-            static_cast<int>(edges[i].solvedPosition));
+            static_cast<int>(edges[i].solved_position));
 
     int state =
         CalculatePermutationState(g2_standing_middle_edge_permutation, 8);
@@ -405,20 +405,20 @@ int CalculateG3State(const Cube &cube) {
     std::vector<int> inner_permutation;
     for (int i : kStandingEdges)
         standing_permutation.push_back(kNormalizeStandingEdge[static_cast<int>(
-            edges[static_cast<size_t>(i)].solvedPosition)]);
+            edges[static_cast<size_t>(i)].solved_position)]);
     for (int i : kMiddleEdges)
         middle_permutation.push_back(kNormalizeMiddleEdge[static_cast<int>(
-            edges[static_cast<size_t>(i)].solvedPosition)]);
+            edges[static_cast<size_t>(i)].solved_position)]);
     for (int i : kEquatorialEdges)
         equatorial_permutation.push_back(
             kNormalizeEquatorialEdge[static_cast<int>(
-                edges[static_cast<size_t>(i)].solvedPosition)]);
+                edges[static_cast<size_t>(i)].solved_position)]);
     for (int i : kOuterCorners)
         outer_permutation.push_back(kNormalizeOuterCorner[static_cast<int>(
-            corners[static_cast<size_t>(i)].solvedPosition)]);
+            corners[static_cast<size_t>(i)].solved_position)]);
     for (int i : kInnerCorners)
         inner_permutation.push_back(kNormalizeInnerCorner[static_cast<int>(
-            corners[static_cast<size_t>(i)].solvedPosition)]);
+            corners[static_cast<size_t>(i)].solved_position)]);
 
     int standing_permutation_state =
         CalculatePermutationState(standing_permutation, 4);
@@ -449,10 +449,10 @@ int CalculateCrossState(const Cube &cube) {
     int permutation[4];
     for (size_t i = 0; i < 12; ++i) {
         auto &edge = edges[i];
-        if (static_cast<int>(edge.solvedPosition) < 4) {
-            orientation[static_cast<int>(edge.solvedPosition)] =
+        if (static_cast<int>(edge.solved_position) < 4) {
+            orientation[static_cast<int>(edge.solved_position)] =
                 static_cast<int>(edge.orientation);
-            permutation[static_cast<int>(edge.solvedPosition)] =
+            permutation[static_cast<int>(edge.solved_position)] =
                 static_cast<int>(i);
         }
     }

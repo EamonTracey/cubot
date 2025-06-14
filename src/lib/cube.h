@@ -26,7 +26,7 @@ class Cube {
             kLeftBack
         };
         enum Orientation orientation;
-        enum Position solvedPosition;
+        enum Position solved_position;
     };
 
     struct Corner {
@@ -42,7 +42,7 @@ class Cube {
             kDownLeftBack
         };
         enum Orientation orientation;
-        enum Position solvedPosition;
+        enum Position solved_position;
     };
 
     static const Cube kSolvedCube;

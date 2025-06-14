@@ -81,8 +81,8 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube) const {
             if (corners[i].orientation != Cube::Corner::Orientation::kCorrect)
                 return false;
         for (size_t i = 8; i < 12; ++i)
-            if (!(static_cast<int>(edges[i].solvedPosition) >= 8 ||
-                  static_cast<int>(edges[i].solvedPosition) <= 11))
+            if (!(static_cast<int>(edges[i].solved_position) >= 8 ||
+                  static_cast<int>(edges[i].solved_position) <= 11))
                 return false;
         return true;
     };
