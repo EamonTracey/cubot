@@ -46,6 +46,13 @@ static constexpr int kDownRightBack =
 static constexpr int kDownLeftBack =
     static_cast<int>(Cube::Corner::Position::kDownLeftBack);
 
+static constexpr int kUp = static_cast<int>(Cube::Facelet::kUp);
+static constexpr int kDown = static_cast<int>(Cube::Facelet::kDown);
+static constexpr int kRight = static_cast<int>(Cube::Facelet::kRight);
+static constexpr int kLeft = static_cast<int>(Cube::Facelet::kLeft);
+static constexpr int kFront = static_cast<int>(Cube::Facelet::kFront);
+static constexpr int kBack = static_cast<int>(Cube::Facelet::kBack);
+
 static_assert(static_cast<int>(Cube::Edge::Orientation::kCorrect) ==
               static_cast<int>(Cube::Corner::Orientation::kCorrect));
 // static constexpr int kCorrect =
@@ -56,6 +63,383 @@ static constexpr int kClockwise =
     static_cast<int>(Cube::Corner::Orientation::kClockwise);
 static constexpr int kCounterclockwise =
     static_cast<int>(Cube::Corner::Orientation::kCounterclockwise);
+
+static constexpr int kSlice[12] = {0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 2, 2};
+static constexpr int kTetrad[8] = {0, 1, 1, 0, 1, 0, 0, 1};
+
+static constexpr int kCenterPositionToFaceletPosition[] = {4,  13, 22,
+                                                           31, 40, 49};
+
+static constexpr int kEdgePositionToFaceletPositions[12][2] = {
+    {5, 19},  {3, 28},  {7, 37},  {1, 46},  {14, 25}, {12, 34},
+    {10, 43}, {16, 52}, {41, 21}, {48, 23}, {39, 32}, {50, 30}};
+
+static constexpr int kCornerPositionToFaceletPositions[8][3] = {
+    {8, 38, 18},  {2, 45, 20},  {6, 36, 29}, {0, 47, 27},
+    {11, 44, 24}, {17, 51, 26}, {9, 42, 35}, {15, 53, 33}};
+
+static constexpr Cube::Edge kFaceletsToEdge[6][6] = {
+    // Up
+    {{Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kUpRight},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kUpLeft},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kUpFront},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kUpBack}},
+    // Down
+    {{Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kDownRight},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kDownLeft},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kDownFront},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kDownBack}},
+    // Right
+    {{Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kUpRight},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kDownRight},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kRightFront},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kRightBack}},
+    // Left
+    {{Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kUpLeft},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kDownLeft},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kLeftFront},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kLeftBack}},
+    // Front
+    {{Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kUpFront},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kDownFront},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kRightFront},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kLeftFront},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}}},
+    // Back
+    {{Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kUpBack},
+     {Cube::Edge::Orientation::kFlipped, Cube::Edge::Position::kDownBack},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kRightBack},
+     {Cube::Edge::Orientation::kCorrect, Cube::Edge::Position::kLeftBack},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}},
+     {Cube::Edge::Orientation{-1}, Cube::Edge::Position{-1}}}};
+
+static constexpr Cube::Corner kFaceletsToCorner[6][6][6] = {
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpRightBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpLeftBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpRightBack},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kUpLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}},
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownRightBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownLeftBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownRightBack},
+      {Cube::Corner::Orientation::kCorrect,
+       Cube::Corner::Position::kDownLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}},
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpRightBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownRightBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpRightBack},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownRightBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}},
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpLeftBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownLeftBack}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpLeftBack},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}},
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpRightFront},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownRightFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpLeftFront},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownLeftFront},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}},
+    {{{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpRightBack},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownRightBack},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kUpRightBack},
+      {Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kDownRightBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation::kClockwise,
+       Cube::Corner::Position::kUpLeftBack},
+      {Cube::Corner::Orientation::kCounterclockwise,
+       Cube::Corner::Position::kDownLeftBack},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}},
+     {{Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}},
+      {Cube::Corner::Orientation{-1}, Cube::Corner::Position{-1}}}}};
+
+static constexpr int kEdgeOrientationSolvedPositionToFacelets[2][12][2] = {
+    {{kUp, kRight},
+     {kUp, kLeft},
+     {kUp, kFront},
+     {kUp, kBack},
+     {kDown, kRight},
+     {kDown, kLeft},
+     {kDown, kFront},
+     {kDown, kBack},
+     {kFront, kRight},
+     {kBack, kRight},
+     {kFront, kLeft},
+     {kBack, kLeft}},
+    {{kRight, kUp},
+     {kLeft, kUp},
+     {kFront, kUp},
+     {kBack, kUp},
+     {kRight, kDown},
+     {kLeft, kDown},
+     {kFront, kDown},
+     {kBack, kDown},
+     {kRight, kFront},
+     {kRight, kBack},
+     {kLeft, kFront},
+     {kLeft, kBack}}};
+
+static constexpr int
+    kCornerOrientationSolvedPositionTetradToFacelets[3][8][2][3] = {
+        {{{kUp, kFront, kRight}, {kUp, kRight, kFront}},
+         {{kUp, kRight, kBack}, {kUp, kBack, kRight}},
+         {{kUp, kLeft, kFront}, {kUp, kFront, kLeft}},
+         {{kUp, kBack, kLeft}, {kUp, kLeft, kBack}},
+         {{kDown, kRight, kFront}, {kDown, kFront, kRight}},
+         {{kDown, kBack, kRight}, {kDown, kRight, kBack}},
+         {{kDown, kFront, kLeft}, {kDown, kLeft, kFront}},
+         {{kDown, kLeft, kBack}, {kDown, kBack, kLeft}}},
+        {{{kFront, kRight, kUp}, {kFront, kUp, kRight}},
+         {{kRight, kBack, kUp}, {kRight, kUp, kBack}},
+         {{kLeft, kFront, kUp}, {kLeft, kUp, kFront}},
+         {{kBack, kLeft, kUp}, {kBack, kUp, kLeft}},
+         {{kRight, kFront, kDown}, {kRight, kDown, kFront}},
+         {{kBack, kRight, kDown}, {kBack, kDown, kRight}},
+         {{kFront, kLeft, kDown}, {kFront, kDown, kLeft}},
+         {{kLeft, kBack, kDown}, {kLeft, kDown, kBack}}},
+        {{{kRight, kUp, kFront}, {kRight, kFront, kUp}},
+         {{kBack, kUp, kRight}, {kBack, kRight, kUp}},
+         {{kFront, kUp, kLeft}, {kFront, kLeft, kUp}},
+         {{kLeft, kUp, kBack}, {kLeft, kBack, kUp}},
+         {{kFront, kDown, kRight}, {kFront, kRight, kDown}},
+         {{kRight, kDown, kBack}, {kRight, kBack, kDown}},
+         {{kLeft, kDown, kFront}, {kLeft, kFront, kDown}},
+         {{kBack, kDown, kLeft}, {kBack, kLeft, kDown}}}};
 
 typedef void (Cube::*TurnMethod)();
 static const TurnMethod kTurnToMethod[] = {&Cube::TurnUpClockwise,
@@ -97,9 +481,9 @@ static const std::array<Cube::Edge, 12> kSolvedEdges = {
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
                Cube::Edge::Position::kRightFront},
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
-               Cube::Edge::Position::kLeftFront},
-    Cube::Edge{Cube::Edge::Orientation::kCorrect,
                Cube::Edge::Position::kRightBack},
+    Cube::Edge{Cube::Edge::Orientation::kCorrect,
+               Cube::Edge::Position::kLeftFront},
     Cube::Edge{Cube::Edge::Orientation::kCorrect,
                Cube::Edge::Position::kLeftBack}};
 
@@ -161,6 +545,30 @@ Cube::Cube(const std::array<struct Edge, 12> &edges,
            const std::array<struct Corner, 8> &corners) {
     edges_ = edges;
     corners_ = corners;
+}
+
+Cube::Cube(const std::array<enum Facelet, 54> &facelets) {
+    for (size_t i = 0; i < 12; ++i) {
+        Facelet facelet1 = facelets[static_cast<size_t>(
+            kEdgePositionToFaceletPositions[i][0])];
+        Facelet facelet2 = facelets[static_cast<size_t>(
+            kEdgePositionToFaceletPositions[i][1])];
+        Cube::Edge edge = kFaceletsToEdge[static_cast<int>(facelet1)]
+                                         [static_cast<int>(facelet2)];
+        edges_[i] = edge;
+    }
+
+    for (size_t i = 0; i < 12; ++i) {
+        Facelet facelet1 = facelets[static_cast<size_t>(
+            kCornerPositionToFaceletPositions[i][0])];
+        Facelet facelet2 = facelets[static_cast<size_t>(
+            kCornerPositionToFaceletPositions[i][1])];
+        Facelet facelet3 = facelets[static_cast<size_t>(
+            kCornerPositionToFaceletPositions[i][2])];
+        Cube::Corner corner = kFaceletsToCorner[static_cast<int>(
+            facelet1)][static_cast<int>(facelet2)][static_cast<int>(facelet3)];
+        corners_[i] = corner;
+    }
 }
 
 void Cube::TurnUpClockwise() {
@@ -460,6 +868,49 @@ void Cube::Apply(const Cube &cube) {
     edges_ = new_edges;
     corners_ = new_corners;
 }
+
+std::array<enum Cube::Facelet, 54> Cube::ToFacelets() const {
+    std::array<enum Facelet, 54> facelets;
+
+    for (size_t i = 0; i < 6; ++i)
+        facelets[static_cast<size_t>(kCenterPositionToFaceletPosition[i])] =
+            static_cast<enum Facelet>(i);
+
+    for (size_t i = 0; i < 12; ++i) {
+        auto edge = edges_[i];
+        int orientation = static_cast<int>(edge.orientation);
+        int solved_position = static_cast<int>(edge.solved_position);
+        facelets[static_cast<size_t>(kEdgePositionToFaceletPositions[i][0])] =
+            static_cast<enum Facelet>(
+                kEdgeOrientationSolvedPositionToFacelets[orientation]
+                                                        [solved_position][0]);
+        facelets[static_cast<size_t>(kEdgePositionToFaceletPositions[i][1])] =
+            static_cast<enum Facelet>(
+                kEdgeOrientationSolvedPositionToFacelets[orientation]
+                                                        [solved_position][1]);
+    }
+
+    for (size_t i = 0; i < 8; ++i) {
+        auto corner = corners_[i];
+        int orientation = static_cast<int>(corner.orientation);
+        int solved_position = static_cast<int>(corner.solved_position);
+        int tetrad = kTetrad[i];
+        facelets[static_cast<size_t>(kCornerPositionToFaceletPositions[i][0])] =
+            static_cast<enum Facelet>(
+                kCornerOrientationSolvedPositionTetradToFacelets
+                    [orientation][solved_position][tetrad][0]);
+        facelets[static_cast<size_t>(kCornerPositionToFaceletPositions[i][1])] =
+            static_cast<enum Facelet>(
+                kCornerOrientationSolvedPositionTetradToFacelets
+                    [orientation][solved_position][tetrad][1]);
+        facelets[static_cast<size_t>(kCornerPositionToFaceletPositions[i][2])] =
+            static_cast<enum Facelet>(
+                kCornerOrientationSolvedPositionTetradToFacelets
+                    [orientation][solved_position][tetrad][2]);
+    }
+
+    return facelets;
+};
 
 const std::array<struct Cube::Edge, 12> &Cube::edges() const { return edges_; }
 

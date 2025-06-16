@@ -21,8 +21,8 @@ class Cube {
             kDownFront,
             kDownBack,
             kRightFront,
-            kLeftFront,
             kRightBack,
+            kLeftFront,
             kLeftBack
         };
         enum Orientation orientation;
@@ -45,11 +45,14 @@ class Cube {
         enum Position solved_position;
     };
 
+    enum struct Facelet { kUp, kDown, kRight, kLeft, kFront, kBack };
+
     static const Cube kSolvedCube;
 
     Cube();
     Cube(const std::array<struct Edge, 12> &edges,
          const std::array<struct Corner, 8> &corners);
+    Cube(const std::array<enum Facelet, 54> &facelets);
     ~Cube() {}
 
     void TurnUpClockwise();
@@ -75,6 +78,8 @@ class Cube {
     void Execute(Algorithm::Turn turn);
     void Apply(const Cube &cube);
     void Invert();
+
+    std::array<enum Facelet, 54> ToFacelets() const;
 
     const std::array<struct Edge, 12> &edges() const;
     const std::array<struct Corner, 8> &corners() const;
