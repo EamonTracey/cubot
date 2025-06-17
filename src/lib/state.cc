@@ -235,7 +235,7 @@ int CalculateParityState(const Cube &cube) {
         for (size_t j = i + 1; j < 8; ++j)
             if (static_cast<int>(corners[i].solved_position) <
                 static_cast<int>(corners[j].solved_position))
-                inversions++;
+                ++inversions;
 
     int state = inversions % 2;
 

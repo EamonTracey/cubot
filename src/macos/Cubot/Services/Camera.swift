@@ -3,13 +3,13 @@ import CoreGraphics
 import CoreImage
 import Foundation
 
-
 class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     let session = AVCaptureSession()
     private(set) var currentFrame: CGImage?
 
     private let output = AVCaptureVideoDataOutput()
-    private let videoQueue = DispatchQueue(label: "com.eamontracey.cubot.camera")
+    private let videoQueue = DispatchQueue(
+        label: "com.eamontracey.cubot.camera")
 
     override init() {
         super.init()
@@ -20,9 +20,10 @@ class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         session.beginConfiguration()
 
         guard let device = AVCaptureDevice.default(for: .video),
-              let input = try? AVCaptureDeviceInput(device: device),
-              session.canAddInput(input),
-              session.canAddOutput(output) else {
+            let input = try? AVCaptureDeviceInput(device: device),
+            session.canAddInput(input),
+            session.canAddOutput(output)
+        else {
             session.commitConfiguration()
             return
         }
@@ -45,10 +46,16 @@ class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
     }
 
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+    func captureOutput(
+        _ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
+        from connection: AVCaptureConnection
+    ) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        else { return }
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        if let cgImage = CIContext().createCGImage(ciImage, from: ciImage.extent) {
+        if let cgImage = CIContext().createCGImage(
+            ciImage, from: ciImage.extent)
+        {
             currentFrame = cgImage
         }
     }

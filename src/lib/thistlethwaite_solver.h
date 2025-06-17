@@ -32,10 +32,10 @@ class ThistlethwaiteSolver {
     GeneratePruneTable4(uint8_t prune_table_4[kThistlethwaitePruneTable4Size]);
 
   private:
-    uint8_t prune_table_1_[kThistlethwaitePruneTable1Size];
-    uint8_t prune_table_2_[kThistlethwaitePruneTable2Size];
-    uint8_t prune_table_3_[kThistlethwaitePruneTable3Size];
-    uint8_t prune_table_4_[kThistlethwaitePruneTable4Size];
+    uint8_t *prune_table_1_;
+    uint8_t *prune_table_2_;
+    uint8_t *prune_table_3_;
+    uint8_t *prune_table_4_;
 };
 
 } // namespace cubot

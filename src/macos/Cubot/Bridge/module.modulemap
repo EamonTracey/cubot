@@ -1,0 +1,4 @@
+module CubotBridge {
+    header "cubot_bridge.h"
+    export *
+}

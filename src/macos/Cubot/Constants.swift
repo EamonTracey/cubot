@@ -2,6 +2,6 @@ import SwiftUI
 
 import Cubot
 
-let cubotColors: [Cubot.Color] = [
+let cubotColors: [cubot.Color] = [
     .WHITE, .YELLOW, .GREEN, .BLUE, .RED, .ORANGE,
 ]

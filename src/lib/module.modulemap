@@ -1,5 +1,11 @@
 module Cubot {
+    header "algorithm.h"
     header "color_detector.h"
     header "cube.h"
+    header "prune.h"
+    header "solve.h"
+    header "state.h"
+    header "thistlethwaite_solver.h"
+    header "two_phase_solver.h"
     export *
 }

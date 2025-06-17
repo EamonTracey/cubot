@@ -558,7 +558,7 @@ Cube::Cube(const std::array<enum Facelet, 54> &facelets) {
         edges_[i] = edge;
     }
 
-    for (size_t i = 0; i < 12; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         Facelet facelet1 = facelets[static_cast<size_t>(
             kCornerPositionToFaceletPositions[i][0])];
         Facelet facelet2 = facelets[static_cast<size_t>(
@@ -867,6 +867,64 @@ void Cube::Apply(const Cube &cube) {
 
     edges_ = new_edges;
     corners_ = new_corners;
+}
+
+bool Cube::IsValid() const {
+    for (auto &edge : edges_) {
+        int orientation = static_cast<int>(edge.orientation);
+        int solved_position = static_cast<int>(edge.solved_position);
+        if (!(orientation == 0 || orientation == 1))
+            return false;
+        if (!(0 <= solved_position && solved_position < 12))
+            return false;
+    }
+
+    for (auto &corner : corners_) {
+        int orientation = static_cast<int>(corner.orientation);
+        int solved_position = static_cast<int>(corner.solved_position);
+        if (!(orientation == 0 || orientation == 1 || orientation == 2))
+            return false;
+        if (!(0 <= solved_position && solved_position < 8))
+            return false;
+    }
+
+    return true;
+}
+
+bool Cube::AreEdgesOrientable() const {
+    int edge_orientation = 0;
+    for (auto &edge : edges_)
+        edge_orientation += static_cast<int>(edge.orientation);
+    return edge_orientation % 2 == 0;
+}
+
+bool Cube::AreCornersOrientable() const {
+    int corner_orientation = 0;
+    for (auto &corner : corners_)
+        corner_orientation += static_cast<int>(corner.orientation);
+    return corner_orientation % 3 == 0;
+}
+
+bool Cube::IsPermutable() const {
+    int edge_inversions = 0;
+    int corner_inversions = 0;
+    for (size_t i = 0; i < 12; ++i) {
+        for (size_t j = i + 1; j < 12; ++j)
+            if (static_cast<int>(edges_[i].solved_position) <
+                static_cast<int>(edges_[j].solved_position))
+                ++edge_inversions;
+    }
+    for (size_t i = 0; i < 12; ++i) {
+        for (size_t j = i + 1; j < 12; ++j)
+            if (static_cast<int>(corners_[i].solved_position) <
+                static_cast<int>(corners_[j].solved_position))
+                ++corner_inversions;
+    }
+    return edge_inversions % 2 == corner_inversions % 2;
+}
+
+bool Cube::IsSolvable() const {
+    return AreEdgesOrientable() && AreCornersOrientable() && IsPermutable();
 }
 
 std::array<enum Cube::Facelet, 54> Cube::ToFacelets() const {

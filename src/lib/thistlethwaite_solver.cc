@@ -67,6 +67,14 @@ static const std::vector<Algorithm::Turn> kThistlethwaitePhase4Turns = {
 namespace cubot {
 
 ThistlethwaiteSolver::ThistlethwaiteSolver() {
+    prune_table_1_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable1Size * sizeof(uint8_t)));
+    prune_table_2_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable2Size * sizeof(uint8_t)));
+    prune_table_3_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable3Size * sizeof(uint8_t)));
+    prune_table_4_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable4Size * sizeof(uint8_t)));
     GeneratePruneTable1(prune_table_1_);
     GeneratePruneTable2(prune_table_2_);
     GeneratePruneTable3(prune_table_3_);
@@ -77,6 +85,14 @@ ThistlethwaiteSolver::ThistlethwaiteSolver(const std::string &path1,
                                            const std::string &path2,
                                            const std::string &path3,
                                            const std::string &path4) {
+    prune_table_1_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable1Size * sizeof(uint8_t)));
+    prune_table_2_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable2Size * sizeof(uint8_t)));
+    prune_table_3_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable3Size * sizeof(uint8_t)));
+    prune_table_4_ = static_cast<uint8_t *>(
+        malloc(kThistlethwaitePruneTable4Size * sizeof(uint8_t)));
     ReadPruneTable(path1, prune_table_1_, kThistlethwaitePruneTable1Size);
     ReadPruneTable(path2, prune_table_2_, kThistlethwaitePruneTable2Size);
     ReadPruneTable(path3, prune_table_3_, kThistlethwaitePruneTable3Size);

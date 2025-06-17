@@ -79,6 +79,12 @@ class Cube {
     void Apply(const Cube &cube);
     void Invert();
 
+    bool IsValid() const;
+    bool AreEdgesOrientable() const;
+    bool AreCornersOrientable() const;
+    bool IsPermutable() const;
+    bool IsSolvable() const;
+
     std::array<enum Facelet, 54> ToFacelets() const;
 
     const std::array<struct Edge, 12> &edges() const;

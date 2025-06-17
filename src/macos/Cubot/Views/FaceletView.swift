@@ -2,7 +2,7 @@ import Cubot
 import SwiftUI
 
 struct FaceletView: View {
-    let color: Cubot.Color?
+    let color: cubot.Color?
 
     @State private var isHovering = false
 
@@ -17,6 +17,6 @@ struct FaceletView: View {
             }
         }
         .onHover { isHovering in self.isHovering = isHovering }
-        .border(isHovering ? .white : .clear, width: 2)
+        .border(isHovering ? .white : .clear, width: 1)
     }
 }

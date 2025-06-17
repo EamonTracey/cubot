@@ -1,8 +1,7 @@
+import Cubot
 import SwiftUI
 
-import Cubot
-
-extension Cubot.Color {
+extension cubot.Color {
     var asSwiftUIColor: SwiftUI.Color {
         switch self {
         case .WHITE:
