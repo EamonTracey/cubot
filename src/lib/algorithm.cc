@@ -1,6 +1,7 @@
 #include "algorithm.h"
 
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -54,11 +55,15 @@ Algorithm::Algorithm() : turns_({}) {}
 
 Algorithm::Algorithm(std::vector<enum Algorithm::Turn> turns) : turns_(turns) {}
 
-Algorithm::Algorithm(std::string stringNotation) {
-    std::stringstream ss(stringNotation);
+Algorithm::Algorithm(std::string string_notation) {
+    std::stringstream ss(string_notation);
     std::string token;
-    while (ss >> token)
+    while (ss >> token) {
+        if (kStringToTurn.count(token) == 0)
+            throw std::invalid_argument(
+                "Invalid string notation passed to Algorithm constructor.");
         turns_.push_back(kStringToTurn.at(token));
+    }
 }
 
 void Algorithm::Compress() {
@@ -86,15 +91,15 @@ void Algorithm::Compress() {
 }
 
 std::string Algorithm::ToStringNotation() const {
-    std::string stringNotation;
+    std::string string_notation;
 
     for (size_t i = 0; i < turns_.size(); ++i) {
         if (i != 0)
-            stringNotation += " ";
-        stringNotation += kTurnToString[static_cast<int>(turns_[i])];
+            string_notation += " ";
+        string_notation += kTurnToString[static_cast<int>(turns_[i])];
     }
 
-    return stringNotation;
+    return string_notation;
 }
 
 const std::vector<enum Algorithm::Turn> &Algorithm::turns() { return turns_; }

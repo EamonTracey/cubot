@@ -870,6 +870,7 @@ void Cube::Apply(const Cube &cube) {
 }
 
 bool Cube::IsValid() const {
+    int seen = 0;
     for (auto &edge : edges_) {
         int orientation = static_cast<int>(edge.orientation);
         int solved_position = static_cast<int>(edge.solved_position);
@@ -877,8 +878,12 @@ bool Cube::IsValid() const {
             return false;
         if (!(0 <= solved_position && solved_position < 12))
             return false;
+        seen |= (1 << solved_position);
     }
+    if (!(seen == 0b111111111111))
+        return false;
 
+    seen = 0;
     for (auto &corner : corners_) {
         int orientation = static_cast<int>(corner.orientation);
         int solved_position = static_cast<int>(corner.solved_position);
@@ -886,7 +891,10 @@ bool Cube::IsValid() const {
             return false;
         if (!(0 <= solved_position && solved_position < 8))
             return false;
+        seen |= (1 << solved_position);
     }
+    if (!(seen == 0b11111111))
+        return false;
 
     return true;
 }

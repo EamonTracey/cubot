@@ -63,17 +63,17 @@ enum Color ColorDetector::DetectColor(const float *pixel_data,
     (void)Ort::GetApi().GetStringTensorContent(output, &color, 1, &offset, 1);
     switch (color) {
     case 'w':
-        return Color::WHITE;
+        return Color::kWhite;
     case 'y':
-        return Color::YELLOW;
-    case 'g':
-        return Color::GREEN;
-    case 'b':
-        return Color::BLUE;
+        return Color::kYellow;
     case 'r':
-        return Color::RED;
+        return Color::kRed;
     case 'o':
-        return Color::ORANGE;
+        return Color::kOrange;
+    case 'g':
+        return Color::kGreen;
+    case 'b':
+        return Color::kBlue;
     default:
         // This error will never be thrown if our models are correct.
         throw std::runtime_error("Model output an unknown value.");

@@ -1,7 +1,5 @@
 import CoreGraphics
 
-import Cubot
-
 extension CGImage {
     // Convert the CGImage to an array of RGB pixel data normalized to the range
     // [0, 1].

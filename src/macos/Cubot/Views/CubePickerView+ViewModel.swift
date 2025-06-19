@@ -8,12 +8,18 @@ import Dispatch
 extension CubePickerView {
     class ViewModel: ObservableObject {
         let camera = Camera()
-        let colorDetector = cubot.ColorDetector()
 
-        @Published var images: [CGImage?] = [nil, nil, nil, nil, nil, nil]
-        @Published var imageIndex = 0
+        @Published var selectedColor: cubot.Color? = nil
+        @Published var selectedFace: cubot.Cube.Facelet = .up
+        @Published var scramble: String = ""
+        @Published var showCamera = false
+        @Published var isHoveringResetScramble = false
         @Published var facesColors: [[cubot.Color?]] = Array(
             repeating: Array(repeating: nil, count: 9), count: 6)
+
+        var isScrambleValid: Bool {
+            IsValidAlgorithm(std.string(scramble))
+        }
 
         func startCamera() {
             camera.start()
@@ -26,6 +32,14 @@ extension CubePickerView {
         func capture() {
             guard let image = camera.currentFrame else { return }
 
+            // Dispatch a task to detect the colors.
+            let currentFace = selectedFace
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.detectColors(image: image, face: currentFace)
+            }
+        }
+
+        func detectColors(image: CGImage, face: cubot.Cube.Facelet) {
             // Crop the image to the camera view.
             let width = image.width
             let height = image.height
@@ -35,17 +49,6 @@ extension CubePickerView {
                 height: size)
             guard let image = image.cropping(to: cropRect) else { return }
 
-            // Save the image and dispatch a task to detect the colors.
-            images[imageIndex] = image
-            let currentIndex = imageIndex
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.detectColors(image: image, imageIndex: currentIndex)
-            }
-            imageIndex += 1
-        }
-
-        func detectColors(image: CGImage, imageIndex: Int) {
-            // Assume that the image is already square.
             let faceletSize = image.width / 3
 
             var faceColors: [cubot.Color] = []
@@ -57,7 +60,7 @@ extension CubePickerView {
                     guard let facelet = image.cropping(to: rect) else { return }
                     guard let pixelData = facelet.toPixelData() else { return }
                     pixelData.withUnsafeBufferPointer { buffer in
-                        let color = colorDetector.DetectColor(
+                        let color = cubot.ColorDetector.shared.DetectColor(
                             buffer.baseAddress, buffer.count)
                         faceColors.append(color)
                     }
@@ -65,19 +68,15 @@ extension CubePickerView {
             }
 
             DispatchQueue.main.async {
-                self.facesColors[imageIndex] = faceColors
+                self.facesColors[Int(face.rawValue)] = faceColors
             }
         }
 
-        func colorsToValidCube() -> cubot.Cube? {
-            // All the colors must be non-nil.
-            guard
-                facesColors.allSatisfy({ faceColors in
-                    faceColors.allSatisfy { color in
-                        color != nil
-                    }
-                })
-            else { return nil }
+        func generateCube() -> cubot.Cube? {
+            // The centers must be non-nil.
+            for faceColors in facesColors {
+                guard faceColors[4] != nil else { return nil }
+            }
 
             // The centers must be distinct colors.
             guard
@@ -106,26 +105,38 @@ extension CubePickerView {
                 }
             }
 
-            // Require that the cube is valid.
             let cube = cubot.Cube(facelets)
-
-            print("facelets")
-            for i in 0..<54 {
-                print(facelets[i].rawValue, terminator: " ")
-            }
-
-            print("we instantiated a cube!")
-
-            guard cube.IsValid() else {
-                print("cube is invalid");
-                for i in 0..<12 {
-                    print(cube.edges().pointee[i].orientation.rawValue, cube.edges().pointee[i].solved_position.rawValue)
-                }
-                return nil }
-
-            print("cube is valid!!!")
-
+            guard cube.IsValid() else { return nil }
             return cube
+        }
+
+        func resetToClear() {
+            facesColors = Array(
+                repeating: Array(repeating: nil, count: 9), count: 6)
+        }
+
+        func resetToSolved() {
+            facesColors = [
+                Array(repeating: .white, count: 9),
+                Array(repeating: .yellow, count: 9),
+                Array(repeating: .red, count: 9),
+                Array(repeating: .orange, count: 9),
+                Array(repeating: .green, count: 9),
+                Array(repeating: .blue, count: 9),
+            ]
+        }
+
+        func resetToScramble() {
+            var cube = cubot.Cube()
+            cube.Execute(cubot.Algorithm(std.string(scramble)))
+
+            let facelets = cube.ToFacelets()
+            for i in 0..<6 {
+                for j in 0..<9 {
+                    let facelet = facelets[i * 9 + j]
+                    facesColors[i][j] = cubot.Color(rawValue: facelet.rawValue)
+                }
+            }
         }
     }
 }

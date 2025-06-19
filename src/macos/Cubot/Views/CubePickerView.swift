@@ -3,44 +3,66 @@ import SwiftUI
 
 struct CubePickerView: View {
     @Binding var cube: cubot.Cube?
+
     @StateObject private var viewModel = ViewModel()
+    @FocusState private var isFocusedScramble
 
     var body: some View {
         VStack {
-            CameraView(session: viewModel.camera.session)
-                .aspectRatio(1.0, contentMode: .fit)
+            CubotColorPickerView(color: $viewModel.selectedColor)
+                .frame(maxWidth: .infinity, maxHeight: 35)
+            if viewModel.showCamera {
+                VStack {
+                    CameraView(session: viewModel.camera.session)
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .clipped()
+                        .onAppear { viewModel.startCamera() }
+                        .onDisappear { viewModel.stopCamera() }
+                    Button("Capture") { viewModel.capture() }
+                }
                 .padding()
-                .onAppear { viewModel.startCamera() }
-                .onDisappear { viewModel.stopCamera() }
+            } else {
+                NetView(facesColors: $viewModel.facesColors)
+                    .padding()
+            }
             HStack {
-                ForEach(0..<6) { i in
-                    VStack {
-                        if let image = viewModel.images[i] {
-                            Image(decorative: image, scale: 1.0)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                        } else {
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(
-                                    style: StrokeStyle(lineWidth: 1))
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(
-                                    i == viewModel.imageIndex ? .white : .gray
-                                )
-                        }
-                        FaceView(colors: $viewModel.facesColors[i])
-                            .aspectRatio(1.0, contentMode: .fit)
+                Button(
+                    viewModel.showCamera ? "Hide camera" : "Show camera",
+                    systemImage: "camera"
+                ) { viewModel.showCamera.toggle() }
+                Picker("", selection: $viewModel.selectedFace) {
+                    ForEach(cubot.Cube.Facelet.allCases, id: \.self) {
+                        facelet in
+                        Text("\(facelet.string)").tag(facelet)
                     }
                 }
+                .pickerStyle(SegmentedPickerStyle())
             }
-            Button("Capture") {
-                viewModel.capture()
-            }.disabled(viewModel.imageIndex >= viewModel.images.endIndex)
-                .onChange(of: viewModel.facesColors) {
-                    _ in cube = viewModel.colorsToValidCube()
-                }
+            .padding(.bottom)
+            HStack {
+                Button("Reset to clear") { viewModel.resetToClear() }
+                Button("Reset to solved") { viewModel.resetToSolved() }
+                Button("Reset to scramble") { viewModel.resetToScramble() }
+                    .disabled(!viewModel.isScrambleValid)
+                    .onHover { isHovering in
+                        viewModel.isHoveringResetScramble = isHovering
+                    }
+                    .popover(
+                        isPresented: .constant(
+                            viewModel.isHoveringResetScramble
+                                && !viewModel.isScrambleValid)
+                    ) {
+                        Text("The scramble is not valid.")
+                            .foregroundStyle(.red)
+                            .padding()
+                    }
+                TextField("Scramble", text: $viewModel.scramble)
+                    .autocorrectionDisabled()
+                    .onSubmit { isFocusedScramble = false }
+                    .focused($isFocusedScramble)
+            }
         }
+        .onChange(of: viewModel.facesColors) { cube = viewModel.generateCube() }
+        .environmentObject(viewModel)
     }
 }

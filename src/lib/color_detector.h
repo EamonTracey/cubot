@@ -7,7 +7,7 @@
 
 namespace cubot {
 
-enum struct Color { WHITE, YELLOW, GREEN, BLUE, RED, ORANGE };
+enum struct Color { kWhite, kYellow, kRed, kOrange, kGreen, kBlue };
 
 class ColorDetector {
   public:

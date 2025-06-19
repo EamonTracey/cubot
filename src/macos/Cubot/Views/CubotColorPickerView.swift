@@ -6,15 +6,14 @@ struct CubotColorPickerView: View {
 
     var body: some View {
         HStack {
-            ForEach(cubotColors, id: \.self) { color in
+            Circle()
+                .foregroundColor(.gray)
+                .scaleEffect(self.color == nil ? 1.0 : 0.75)
+                .onTapGesture { _ in self.color = nil }
+            ForEach(cubot.Color.allCases, id: \.self) { color in
                 Circle()
                     .foregroundColor(color.asSwiftUIColor)
-                    .overlay {
-                        Circle()
-                            .stroke(
-                                self.color == color ? .white : .clear,
-                                lineWidth: 1)
-                    }
+                    .scaleEffect(self.color == color ? 1.0 : 0.75)
                     .onTapGesture { _ in self.color = color }
             }
         }

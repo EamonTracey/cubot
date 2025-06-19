@@ -31,7 +31,7 @@ class Algorithm {
 
     Algorithm();
     Algorithm(std::vector<enum Turn> turns);
-    Algorithm(std::string stringNotation);
+    Algorithm(std::string string_notation);
 
     void Compress();
     std::string ToStringNotation() const;

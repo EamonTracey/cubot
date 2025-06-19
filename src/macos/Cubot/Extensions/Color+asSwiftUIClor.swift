@@ -4,18 +4,18 @@ import SwiftUI
 extension cubot.Color {
     var asSwiftUIColor: SwiftUI.Color {
         switch self {
-        case .WHITE:
+        case .white:
             return .white
-        case .YELLOW:
+        case .yellow:
             return .yellow
-        case .GREEN:
-            return .green
-        case .BLUE:
-            return .blue
-        case .RED:
+        case .red:
             return .red
-        case .ORANGE:
+        case .orange:
             return .orange
+        case .green:
+            return .green
+        case .blue:
+            return .blue
         @unknown default:
             fatalError()
         }

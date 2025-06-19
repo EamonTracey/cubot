@@ -11,6 +11,8 @@ class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let videoQueue = DispatchQueue(
         label: "com.eamontracey.cubot.camera")
 
+    var n = 1
+
     override init() {
         super.init()
         configure()
