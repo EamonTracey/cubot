@@ -1,5 +1,6 @@
 build/
 tables/
+src/macos/Cubot/Resources/*.pt
 
 *.ipynb
 .ipynb_checkpoints/

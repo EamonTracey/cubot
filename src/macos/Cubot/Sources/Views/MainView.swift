@@ -37,7 +37,7 @@ struct MainView: View {
                 .padding()
             }
             Text("Solution: \(viewModel.solution ?? "")")
-                .font(.title)
+                .font(.title.bold())
             Spacer()
 
         }
@@ -45,6 +45,7 @@ struct MainView: View {
         .onAppear {
             cubot.ColorDetector.loadSharedInBackground()
             cubot.ThistlethwaiteSolver.loadSharedInBackground()
+            cubot.TwoPhaseSolver.loadSharedInBackground()
         }
 
     }

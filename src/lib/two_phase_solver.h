@@ -32,10 +32,10 @@ class TwoPhaseSolver {
     GeneratePruneTable4(uint8_t prune_table_4[kTwoPhasePruneTable4Size]);
 
   private:
-    uint8_t prune_table_1_[kTwoPhasePruneTable1Size];
-    uint8_t prune_table_2_[kTwoPhasePruneTable2Size];
-    uint8_t prune_table_3_[kTwoPhasePruneTable3Size];
-    uint8_t prune_table_4_[kTwoPhasePruneTable4Size];
+    uint8_t *prune_table_1_;
+    uint8_t *prune_table_2_;
+    uint8_t *prune_table_3_;
+    uint8_t *prune_table_4_;
 };
 
 } // namespace cubot

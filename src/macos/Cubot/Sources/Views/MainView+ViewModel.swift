@@ -18,7 +18,7 @@ extension MainView {
         func solve() {
             if let cube = cube {
                 solution = String(
-                    cubot.ThistlethwaiteSolver.shared.Solve(cube)
+                    cubot.TwoPhaseSolver.shared.Solve(cube, -1)
                         .ToStringNotation())
             }
         }
