@@ -1,5 +1,5 @@
-import SwiftUI
 import Cubot
+import SwiftUI
 
 @main
 struct CubotApp: App {

@@ -27,6 +27,8 @@ MODELS_DIR = models
 MODELS_ONNX = $(wildcard $(MODELS_DIR)/*.onnx)
 MODELS_HEADER = $(SRC_LIB_DIR)/models.h
 
+SRC_MACOS = $(SRC_DIR)/macos
+
 .PHONY: all
 all: $(BUILD_LIB_DIR)/lib$(LIB_NAME).a $(BINARIES)
 
@@ -57,7 +59,7 @@ $(BUILD_BIN_DIR)/%: $(SRC_BIN_DIR)/%.cc $(BUILD_LIB_DIR)/lib$(LIB_NAME).a
 format:
 	yapf -i $(SRC_PYTHON_PY)
 	clang-format -i $(SRC_LIB_CC) $(SRC_LIB_H) $(SRC_BIN_CC)
-	swift-format format --recursive 
+	swift-format format -i --recursive $(SRC_MACOS)
 
 # Clean.
 .PHONY: clean
