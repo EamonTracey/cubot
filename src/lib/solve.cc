@@ -39,7 +39,7 @@ Solve(const Cube &cube, std::function<int(const Cube &cube)> heuristic,
     std::vector<Algorithm> solutions;
     for (int depth = 0;; ++depth) {
         std::stack<Entry> frontier;
-        frontier.push({cube, 0});
+        frontier.push({cube, 0, static_cast<Algorithm::Turn>(-1)});
         path.resize(static_cast<size_t>(depth));
         while (frontier.size() > 0) {
             struct Entry entry = frontier.top();
