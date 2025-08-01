@@ -123,8 +123,9 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube, int extra_depths) const {
 
         int max_depth = -1;
         if (phase2.turns().size() > 0) {
-            max_depth = phase1.turns().size() + phase2.turns().size() -
-                        potential_phase1.turns().size() - 1;
+            max_depth =
+                static_cast<int>(phase1.turns().size() + phase2.turns().size() -
+                                 potential_phase1.turns().size() - 1);
         }
 
         std::vector<Algorithm> potential_phase2s =
