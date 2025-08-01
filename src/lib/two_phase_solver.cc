@@ -112,25 +112,30 @@ Algorithm TwoPhaseSolver::Solve(const Cube &cube, int extra_depths) const {
         return cube == Cube::kSolvedCube;
     };
 
-    int depth = -1;
     Algorithm phase1;
     Algorithm phase2;
     std::vector<Algorithm> potential_phase1s =
         ::Solve(cube, phase_one_heuristic, phase_one_goal_predicate,
-                kTwoPhasePhase1Turns, extra_depths);
+                kTwoPhasePhase1Turns, extra_depths, -1);
     for (auto &potential_phase1 : potential_phase1s) {
         Cube copy = cube;
         copy.Execute(potential_phase1);
-        Algorithm potential_phase2 =
-            ::Solve(copy, phase_two_heuristic, phase_two_goal_predicate,
-                    kTwoPhasePhase2Turns);
-        int potential_depth = static_cast<int>(potential_phase1.turns().size() +
-                                               potential_phase2.turns().size());
-        if (depth < 0 || potential_depth < depth) {
-            phase1 = potential_phase1;
-            phase2 = potential_phase2;
-            depth = potential_depth;
+
+        int max_depth = -1;
+        if (phase2.turns().size() > 0) {
+            max_depth = phase1.turns().size() + phase2.turns().size() -
+                        potential_phase1.turns().size() - 1;
         }
+
+        std::vector<Algorithm> potential_phase2s =
+            ::Solve(copy, phase_two_heuristic, phase_two_goal_predicate,
+                    kTwoPhasePhase2Turns, -1, max_depth);
+        if (potential_phase2s.size() == 0)
+            continue;
+        Algorithm potential_phase2 = potential_phase2s[0];
+
+        phase1 = potential_phase1;
+        phase2 = potential_phase2;
     }
 
     std::vector<Algorithm::Turn> phases;

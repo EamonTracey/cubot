@@ -22,13 +22,14 @@ Algorithm Solve(const Cube &cube,
                 std::function<int(const Cube &cube)> heuristic,
                 std::function<bool(const Cube &cube)> goal_predicate,
                 const std::vector<Algorithm::Turn> &turns) {
-    return Solve(cube, heuristic, goal_predicate, turns, -1)[0];
+    return Solve(cube, heuristic, goal_predicate, turns, -1, -1)[0];
 }
 
 std::vector<Algorithm>
 Solve(const Cube &cube, std::function<int(const Cube &cube)> heuristic,
       std::function<bool(const Cube &cube)> goal_predicate,
-      const std::vector<Algorithm::Turn> &turns, int extra_depths) {
+      const std::vector<Algorithm::Turn> &turns, int extra_depths,
+      int max_depth) {
     struct Entry {
         Cube cube;
         int depth;
@@ -45,6 +46,9 @@ Solve(const Cube &cube, std::function<int(const Cube &cube)> heuristic,
             struct Entry entry = frontier.top();
             frontier.pop();
 
+            if (max_depth >= 0 && entry.depth > max_depth)
+                return solutions;
+
             if (solutions.size() > 0 &&
                 entry.depth > static_cast<int>(solutions[0].turns().size()) +
                                   extra_depths)
@@ -56,11 +60,11 @@ Solve(const Cube &cube, std::function<int(const Cube &cube)> heuristic,
             if (entry.depth + heuristic(entry.cube) > depth)
                 continue;
 
-            if (goal_predicate(entry.cube))
-                solutions.push_back(Algorithm(path));
-
-            if (entry.depth == depth)
+            if (entry.depth == depth) {
+                if (goal_predicate(entry.cube))
+                    solutions.push_back(Algorithm(path));
                 continue;
+            }
 
             for (auto turn : turns) {
                 if ((kLayer[static_cast<int>(entry.turn)] ==
